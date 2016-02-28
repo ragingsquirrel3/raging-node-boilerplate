@@ -1,10 +1,12 @@
-
 {
   "name": "raging-node-boilerplate",
   "version": "0.0.1",
   "description": "A boilerplate node.js project with tests",
+  "scripts": {
+  	"test": "mocha test"
+  },
   "authors": [
-    "Travis Sheppard",
+    "Travis Sheppard"
   ],
   "license": "MIT",
   "dependencies": {
