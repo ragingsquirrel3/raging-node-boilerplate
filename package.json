@@ -1,3 +1,39 @@
+
 {
-	
+  "name": "raging-node-boilerplate",
+  "version": "0.0.1",
+  "description": "A boilerplate node.js project with tests",
+  "authors": [
+    "Travis Sheppard",
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "history": "^2.0.0",
+    "invariant": "^2.0.0",
+    "warning": "^2.0.0"
+  },
+  "devDependencies": {
+    "babel": "^5.4.7",
+    "babel-core": "^5.4.7",
+    "babel-eslint": "^4.1.6",
+    "babel-loader": "^5.0.0",
+    "babel-plugin-dev-expression": "^0.1.0",
+    "bundle-loader": "^0.5.2",
+    "codecov.io": "^0.1.6",
+    "coveralls": "^2.11.4",
+    "css-loader": "^0.19.0",
+    "eslint": "^1.7.3",
+    "eslint-config-rackt": "^1.1.0",
+    "eslint-plugin-react": "^3.6.3",
+    "express": "^4.13.3",
+    "gzip-size": "^3.0.0",
+    "isparta-loader": "^1.0.0",
+    "mocha": "^2.0.1",
+    "webpack": "^1.4.13",
+    "webpack-dev-middleware": "^1.2.0"
+  },
+  "keywords": [
+    "boilerplate",
+    "mocha"
+  ]
 }
