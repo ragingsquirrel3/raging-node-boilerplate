@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <script src="https://aframe.io/releases/latest/aframe.min.js" type="text/javascript" charset="utf-8"></script>
+    </head>
+    <body>
+    	<div id="target"></div>
+    	<template is="a-template" element="a-c-base-pair" size="1">
+			<a-sphere position="-1 0 0" radius="0.10" color="#2DD3D6"></a-sphere>
+			<a-cylinder position="-1 0.75 0" rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color="#F2E422"></a-cylinder>
+			<a-cylinder position="-1 0.25 0" rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color="#77468C"></a-cylinder>
+			<a-sphere position="-1 1 0" radius="0.10" color="#2DD3D6"></a-sphere>
+		</template>
+		<template is="a-template" element="a-g-base-pair" size="1">
+			<a-sphere position="-1 0 0" radius="0.10" color="#2DD3D6"></a-sphere>
+			<a-cylinder position="-1 0.75 0" rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color="#00A51D"></a-cylinder>
+			<a-cylinder position="-1 0.25 0" rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color="#F25270"></a-cylinder>
+			<a-sphere position="-1 1 0" radius="0.10" color="#2DD3D6"></a-sphere>
+		</template>
+    	 <a-scene>
+			<a-c-base-pair position="-1 0 0" rotation="0 0 0"></a-c-base-pair>
+			<a-g-base-pair position="-0.5 0 0" rotation="15 0 0"></a-g-base-pair>
+			<a-c-base-pair position="0 0 0" rotation="30 0 0"></a-c-base-pair>
+			<a-g-base-pair position="0.5 0 0" rotation="45 0 0"></a-g-base-pair>
+			<a-g-base-pair position="1.0 0 0" rotation="60 0 0"></a-g-base-pair>
+			<a-c-base-pair position="1.5 0 0" rotation="75 0 0"></a-c-base-pair>
+			<a-g-base-pair position="2 0 0" rotation="90 0 0"></a-g-base-pair>
+		</a-scene>
+
+    	
+        <script src="js/bundle.js" type="text/javascript" charset="utf-8"></script>
+    </body>
+</html>
