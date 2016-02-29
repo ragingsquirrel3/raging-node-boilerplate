@@ -17,7 +17,7 @@ describe('build script', function () {
   // delete if already present
   if (isJsBuilt) fs.unlinkSync(JS_FILE_PATH);
 
-  it('should produce build/js/bundle.js', function (done) {
+  it('dev build should produce build/js/bundle.js', function (done) {
     child = exec(BUILD_COMMAND, function (error, stdout, stderr) {
       var jsBuildContents = fs.readdirSync(JS_BUILD_PATH);
       var isJsBuilt = (jsBuildContents.indexOf(JS_BUILD_FILE_NAME) > -1);
@@ -28,9 +28,7 @@ describe('build script', function () {
       }
       done();
     });
-
-    // run webpack --progress --colors
-    // check to see that file exists
-    
   });
+
+  // TODO production build
 });

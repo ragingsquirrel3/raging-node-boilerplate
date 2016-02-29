@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "A boilerplate node.js project with tests",
   "scripts": {
-    "build": "webpack --progress --colors",
+    "dev": "webpack-dev-server --progress --colors --content-base build/dev/",
+    "build": "cp src/lib/index.html build/dev/ && webpack --progress --colors",
     "test": "mocha test --compilers js:babel-register"
   },
   "authors": [
