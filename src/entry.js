@@ -1,7 +1,8 @@
-require('babel-register');
-var React = require('react');
-var ReactDOM = require('react-dom');
+// require('babel-register');
+// var React = require('react');
+// var ReactDOM = require('react-dom');
 
-var ReduxApplication = require('./application_component');
+// var ReduxApplication = require('./application_component');
 
-ReactDOM.render(React.createElement(ReduxApplication, {}), document.getElementById('target'));
+// ReactDOM.render(React.createElement(ReduxApplication, {}), document.getElementById('target'));
+console.log('entry');
