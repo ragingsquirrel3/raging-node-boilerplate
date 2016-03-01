@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "A boilerplate node.js project with tests",
   "scripts": {
-  	"test": "mocha test --compilers js:babel-register"
+  	"test": "mocha test --compilers js:babel-register",
+    "dev": "watch mocha test"
   },
   "authors": [
     "Travis Sheppard"
