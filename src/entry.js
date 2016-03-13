@@ -1,7 +1,10 @@
-import ApplicationComponent from './application_component';
+import React from 'react';
+import ReactDOM from 'react-dom';
 
-// ReactDOM.render(React.createElement(ReduxApplication, {}), document.getElementById('target'));
-console.log('entry');
+import ApplicationComponent from './application_component';
+import DNA from './components/dna';
+
+ReactDOM.render(<DNA />, document.getElementById('target'));
 
 // bp colors
 var A_COLOR = '#00A51D';
