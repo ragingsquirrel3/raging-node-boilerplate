@@ -44,7 +44,7 @@ export default React.createClass({
         <a-cylinder position="-1 0.25 0" rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={T_COLOR}></a-cylinder>
         <a-sphere position="-1 0.5 0" radius="0.10" color="#2DD3D6"></a-sphere>
       </a-entity>
-    )
+    );
   },
 
   _renderT () {
@@ -55,7 +55,7 @@ export default React.createClass({
         <a-cylinder position="-1 0.25 0" rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={A_COLOR}></a-cylinder>
         <a-sphere position="-1 0.5 0" radius="0.10" color="#2DD3D6"></a-sphere>
       </a-entity>
-    )
+    );
   },
 
   _renderC () {
@@ -66,7 +66,7 @@ export default React.createClass({
         <a-cylinder position="-1 0.25 0" rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={G_COLOR}></a-cylinder>
         <a-sphere position="-1 0.5 0" radius="0.10" color="#2DD3D6"></a-sphere>
       </a-entity>
-    )
+    );
   },
 
   _renderG () {
@@ -77,7 +77,7 @@ export default React.createClass({
         <a-cylinder position="-1 0.25 0" rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={C_COLOR}></a-cylinder>
         <a-sphere position="-1 0.5 0" radius="0.10" color="#2DD3D6"></a-sphere>
       </a-entity>
-    )
+    );
   }
 });
 
