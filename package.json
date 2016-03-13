@@ -12,13 +12,10 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "history": "^2.0.0",
     "invariant": "^2.0.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
     "react-redux": "^4.4.1",
-    "react-router": "^2.0.0",
-    "react-router-redux": "^4.0.0",
     "redux": "^3.3.1",
     "warning": "^2.0.0"
   },
