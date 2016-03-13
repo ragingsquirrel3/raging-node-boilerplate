@@ -2,9 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import ApplicationComponent from './application_component';
-import DNA from './components/dna';
 
-ReactDOM.render(<DNA />, document.getElementById('target'));
+ReactDOM.render(<ApplicationComponent />, document.getElementById('target'));
 
 // bp colors
 var A_COLOR = '#00A51D';
