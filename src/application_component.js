@@ -1,13 +1,12 @@
-import React from 'react'
-import { createStore, combineReducers, applyMiddleware } from 'redux'
-import { Provider } from 'react-redux'
-import { Router, Route, browserHistory } from 'react-router'
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
+import React from 'react';
+import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { Provider } from 'react-redux';
+import { Router, Route, browserHistory } from 'react-router';
+import { syncHistoryWithStore, routerReducer } from 'react-router-redux';
 
-// import reducers from '<project-path>/reducers'
-
-const Application = React.createClass({
+export default React.createClass({
   render () {
+    console.log(blah)
     // Add the reducer to your store on the `routing` key
     const store = createStore(
       combineReducers({
@@ -29,4 +28,4 @@ const Application = React.createClass({
       </Provider>
     );  
   }
-})
+});
