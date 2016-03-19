@@ -4,9 +4,9 @@ const path = require('path');
 module.exports = {
   entry: './src/entry.js',
   output: {
-    path: path.resolve(__dirname, "build"),
-    publicPath: "/assets/",
-    filename: "bundle.js"
+    path: path.resolve(__dirname, 'build/prod/assets'),
+    publicPath: '/assets/',
+    filename: 'bundle.js'
   },
   module: {
     loaders: [
