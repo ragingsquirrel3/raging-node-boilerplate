@@ -1,6 +1,1 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-
-import DNA from './components/dna';
-
-ReactDOM.render(<DNA />, document.getElementById('target'));
+console.log('Compiled with webpack.  Edit me in src/entry.js');
