@@ -5,13 +5,15 @@
   "scripts": {
     "build": "webpack --progress --colors",
     "start": "webpack-dev-server --content-base build/dev/",
-    "test": "mocha test --compilers js:babel-register"
+    "test": "mocha test --compilers js:babel-register -t 10000"
   },
   "authors": [
     "Travis Sheppard"
   ],
   "license": "MIT",
   "dependencies": {
+    "react": "^0.14.7",
+    "react-dom": "^0.14.7"
   },
   "devDependencies": {
     "babel": "^5.4.7",

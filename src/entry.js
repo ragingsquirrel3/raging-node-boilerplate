@@ -1,1 +1,6 @@
-console.log('Compiled with webpack.  Edit me in src/entry.js');
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import Chart from './components/chart';
+
+ReactDOM.render(<Chart />, document.getElementById('target'));
