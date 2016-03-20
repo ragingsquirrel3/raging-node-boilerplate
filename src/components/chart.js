@@ -1,7 +1,10 @@
 import React from 'react';
 import d3 from 'd3';
 
+const AXIS_WIDTH = 30;
+const AXIS_HEIGHT = 30;
 const NODE_CLASS = 'fc-node';
+const PADDING_SIZE = 30;
 const DEFAULT_NODE_RADIUS = 5;
 const TRANSITION_DURATION = 500;
 
@@ -21,7 +24,7 @@ const Chart = React.createClass({
     return {
       xKey: numericalKeys[0],
       yKey: numericalKeys[0],
-      domSize: 600,
+      domSize: 350,
     }
   },
 
@@ -41,9 +44,42 @@ const Chart = React.createClass({
   _drawSVG () {
     const xScale = this._getXScale();
     const yScale = this._getYScale();
-    let svg = d3.select(this.refs.svg);
+    const svg = d3.select(this.refs.svg);
+    // render axes
+    // x
+    const xAxisFn = d3.svg.axis()
+      .orient('bottom')
+      .tickSize(6, 6)
+      .scale(xScale);
+    const xTranslate = `translate(${0}, ${this.state.domSize - PADDING_SIZE})`;
+    var axis = svg.selectAll('g.x-axis').data([null]);
+    axis.enter().append('g')
+      .classed('x-axis', true)
+      .attr({
+        transform: xTranslate
+      });
+    axis.transition()
+      .duration(TRANSITION_DURATION)
+      .call(xAxisFn);
+    // y
+    const yAxisFn = d3.svg.axis()
+      .orient('left')
+      .tickSize(3, 3)
+      .scale(yScale);
+    const yTranslate = `translate(${PADDING_SIZE}, ${0})`;
+    var axis = svg.selectAll('g.y-axis').data([null]);
+    axis.enter().append('g')
+      .classed('y-axis', true)
+      .attr({
+        transform: yTranslate
+      });
+    axis.transition()
+      .duration(TRANSITION_DURATION)
+      .call(yAxisFn);
+      
+    // render nodes
     // TODO, add key function
-    let nodes = svg.selectAll(`.${NODE_CLASS}`)
+    var nodes = svg.selectAll(`.${NODE_CLASS}`)
       .data(this.props.data);
     // exit
     nodes.exit().remove();
@@ -51,22 +87,22 @@ const Chart = React.createClass({
     nodes.enter().append('circle')
       .classed(NODE_CLASS, true)
       .attr({
-        cx: 0,
-        cy: 0,
+        cx: d => { return xScale(d[this.state.xKey])},
+        cy: yScale.range()[0],
         r: DEFAULT_NODE_RADIUS
       });
     // update
     nodes.transition()
       .duration(TRANSITION_DURATION)
       .attr({
-        cx: 300,
-        cy: 300,
+        cx: d => { return xScale(d[this.state.xKey])},
+        cy: d => { return yScale(d[this.state.yKey])},
       });
   },
 
   _getXScale () {
     const _domain = this._getRangeByKey(this.state.xKey);
-    const _range = [0, this.state.domSize];
+    const _range = [PADDING_SIZE, this.state.domSize - PADDING_SIZE];
     return d3.scale.linear()
       .domain(_domain)
       .range(_range);
@@ -74,7 +110,7 @@ const Chart = React.createClass({
 
   _getYScale () {
     const _domain = this._getRangeByKey(this.state.yKey);
-    const _range = [this.state.domSize, 0];
+    const _range = [this.state.domSize - PADDING_SIZE, PADDING_SIZE];
     return d3.scale.linear()
       .domain(_domain)
       .range(_range);
