@@ -3,7 +3,6 @@
   "version": "0.0.1",
   "description": "A boilerplate node.js project with tests",
   "scripts": {
-    "build": "webpack --progress --colors",
     "start": "cp src/lib/index.html build/dev/index.html && webpack-dev-server --content-base build/dev/",
     "test": "mocha test --compilers js:babel-register -t 10000"
   },
@@ -12,6 +11,7 @@
   ],
   "license": "MIT",
   "dependencies": {
+    "d3": "^3.5.16",
     "react": "^0.14.7",
     "react-dom": "^0.14.7"
   },
@@ -38,6 +38,8 @@
     "webpack-dev-middleware": "^1.2.0"
   },
   "keywords": [
+    "react",
+    "d3",
     "boilerplate",
     "mocha"
   ]
