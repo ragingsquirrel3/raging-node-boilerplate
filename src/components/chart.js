@@ -1,5 +1,6 @@
 import React from 'react';
 import d3 from 'd3';
+import Select from 'react-select';
 
 const AXIS_WIDTH = 30;
 const AXIS_HEIGHT = 30;
@@ -15,7 +16,7 @@ const Chart = React.createClass({
 
   getDefaultProps () {
     return {
-      data: [{ name: 'cat', 'key1': 1, 'key2': 2 }, { name: 'dog', 'key1': 2, 'key2': 2 }]
+      data: getDefaultData()
     }
   },
 
@@ -23,8 +24,8 @@ const Chart = React.createClass({
     const numericalKeys = this._getNumericalKeys();
     return {
       xKey: numericalKeys[0],
-      yKey: numericalKeys[0],
-      domSize: 350,
+      yKey: numericalKeys[numericalKeys.length - 1],
+      domSize: 550,
     }
   },
 
@@ -32,6 +33,8 @@ const Chart = React.createClass({
     return (
       <div>
         <svg ref='svg' width={this.state.domSize} height={this.state.domSize} />
+        {this._renderSelectorFromKey('xKey')}
+        {this._renderSelectorFromKey('yKey')}
       </div>
     );
   },
@@ -40,10 +43,33 @@ const Chart = React.createClass({
     this._drawSVG();
   },
 
+  componentDidUpdate () {
+    this._drawSVG();
+  },
+
+  // key 'xKey' 'yKey' or 'cKey'
+  _renderSelectorFromKey (key) {
+    let _options = this._getNumericalKeys()
+      .map( d => {
+        return { value: d, label: d };
+      });
+    let _onChange = newValue => {
+      let obj = {};
+      obj[key] = newValue;
+      this.setState(obj);
+    };
+    return (
+      <div>
+        <Select options={_options} value={this.state[key]} onChange={_onChange}/>
+      </div>
+    );
+  },
+
   // d3-fu
   _drawSVG () {
     const xScale = this._getXScale();
     const yScale = this._getYScale();
+    const cScale = this._getCScale();
     const svg = d3.select(this.refs.svg);
     // render axes
     // x
@@ -89,7 +115,8 @@ const Chart = React.createClass({
       .attr({
         cx: d => { return xScale(d[this.state.xKey])},
         cy: yScale.range()[0],
-        r: DEFAULT_NODE_RADIUS
+        r: DEFAULT_NODE_RADIUS,
+        fill: 'white'
       });
     // update
     nodes.transition()
@@ -97,6 +124,7 @@ const Chart = React.createClass({
       .attr({
         cx: d => { return xScale(d[this.state.xKey])},
         cy: d => { return yScale(d[this.state.yKey])},
+        fill: cScale
       });
   },
 
@@ -114,6 +142,10 @@ const Chart = React.createClass({
     return d3.scale.linear()
       .domain(_domain)
       .range(_range);
+  },
+
+  _getCScale () {
+    return d3.scale.category10();
   },
 
   // returns [minValue, maxValue] for data measured by value at key param
@@ -136,5 +168,14 @@ const Chart = React.createClass({
     return numericalKeys;
   }
 });
+
+function getDefaultData () {
+  return [
+    { name: 'cat', 'key1': 1, 'key2': 2 },
+    { name: 'dog', 'key1': 2, 'key2': 3 },
+    { name: 'fish', 'key1': 2, 'key2': 5 },
+    { name: 'mouse', 'key1': 1, 'key2': 5 },
+  ];
+};
 
 export default Chart;
