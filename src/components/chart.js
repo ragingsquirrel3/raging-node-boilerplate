@@ -6,8 +6,8 @@ const AXIS_WIDTH = 30;
 const AXIS_HEIGHT = 30;
 const NODE_CLASS = 'fc-node';
 const PADDING_SIZE = 30;
-const DEFAULT_NODE_RADIUS = 5;
-const TRANSITION_DURATION = 500;
+const DEFAULT_NODE_RADIUS = 3;
+const TRANSITION_DURATION = 1000;
 
 const Chart = React.createClass({
   propTypes: {
@@ -120,6 +120,7 @@ const Chart = React.createClass({
       });
     // update
     nodes.transition()
+      .delay( (d, i) => { return i / this.props.data.length * TRANSITION_DURATION; })
       .duration(TRANSITION_DURATION)
       .attr({
         cx: d => { return xScale(d[this.state.xKey])},
@@ -170,12 +171,11 @@ const Chart = React.createClass({
 });
 
 function getDefaultData () {
-  return [
-    { name: 'cat', 'key1': 1, 'key2': 2 },
-    { name: 'dog', 'key1': 2, 'key2': 3 },
-    { name: 'fish', 'key1': 2, 'key2': 5 },
-    { name: 'mouse', 'key1': 1, 'key2': 5 },
-  ];
+  let _data = [];
+  for (var i = 1000; i >= 0; i--) {
+    _data.push({ name: `item${i}`, key1: i, key2: Math.random(), key3: Math.random() });
+  };
+  return _data;
 };
 
 export default Chart;
