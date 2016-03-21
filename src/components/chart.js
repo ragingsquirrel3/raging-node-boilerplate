@@ -4,6 +4,7 @@ import Select from 'react-select';
 
 const AXIS_WIDTH = 30;
 const AXIS_HEIGHT = 30;
+const DEFAULT_DOME_SIZE = 485;
 const NODE_CLASS = 'fc-node';
 const PADDING_SIZE = 30;
 const DEFAULT_NODE_RADIUS = 3;
@@ -25,7 +26,8 @@ const Chart = React.createClass({
     return {
       xKey: numericalKeys[0],
       yKey: numericalKeys[numericalKeys.length - 1],
-      domSize: 485,
+      domWidth: DEFAULT_DOME_SIZE,
+      domHeight: DEFAULT_DOME_SIZE,
       mode: 'scatter' // 'scatter' or 'dist'
     }
   },
@@ -38,8 +40,8 @@ const Chart = React.createClass({
           <div style={styles.yContainer}>
             {this._renderSelectorFromKey('yKey')}
           </div>
-          <div>
-            <svg ref='svg' width={this.state.domSize * 2} height={this.state.domSize} />
+          <div ref='svgContainer' style={styles.svgContainer}>
+            <svg ref='svg' width={this.state.domWidth} height={this.state.domHeight} />
             <div style={styles.xContainer}>
               <div style={styles.innerXContainer}>
                 {this._renderSelectorFromKey('xKey')}
@@ -51,7 +53,9 @@ const Chart = React.createClass({
     );
   },
 
+  // calc width and set resize events
   componentDidMount () {
+    this._calculateDomSize();
     this._drawSVG();
   },
 
@@ -109,7 +113,7 @@ const Chart = React.createClass({
       .orient('bottom')
       .tickSize(6, 6)
       .scale(xScale);
-    const xTranslate = `translate(${0}, ${this.state.domSize - PADDING_SIZE})`;
+    const xTranslate = `translate(${0}, ${yScale.range()[0]})`;
     var axis = svg.selectAll('g.x-axis').data([null]);
     axis.enter().append('g')
       .classed('x-axis', true)
@@ -160,9 +164,15 @@ const Chart = React.createClass({
       });
   },
 
+  _calculateDomSize () {
+    let rect = this.refs.svgContainer.getBoundingClientRect();
+    // only update if width, webpack dev bug
+    if (rect.width > 0) this.setState({ domWidth: rect.width });
+  },
+
   _getXScale () {
     const _domain = this._getRangeByKey(this.state.xKey);
-    const _range = [PADDING_SIZE, this.state.domSize - PADDING_SIZE];
+    const _range = [PADDING_SIZE, this.state.domWidth -  PADDING_SIZE];
     return d3.scale.linear()
       .domain(_domain)
       .range(_range);
@@ -170,7 +180,7 @@ const Chart = React.createClass({
 
   _getYScale () {
     const _domain = this._getRangeByKey(this.state.yKey);
-    const _range = [this.state.domSize - PADDING_SIZE, PADDING_SIZE];
+    const _range = [this.state.domHeight - PADDING_SIZE - AXIS_HEIGHT, PADDING_SIZE];
     return d3.scale.linear()
       .domain(_domain)
       .range(_range);
@@ -227,6 +237,9 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'center',
     paddingRight: '1rem'
+  },
+  svgContainer: {
+    width: '90%'
   }
 };
 
