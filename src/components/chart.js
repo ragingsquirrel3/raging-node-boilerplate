@@ -26,24 +26,27 @@ const Chart = React.createClass({
       xKey: numericalKeys[0],
       yKey: numericalKeys[numericalKeys.length - 1],
       domSize: 485,
+      mode: 'scatter' // 'scatter' or 'dist'
     }
   },
 
   render () {
     return (
-      <div style={styles.graphContainer}>
-        <div style={styles.yContainer}>
-          {this._renderSelectorFromKey('yKey')}
-        </div>
-        <div>
-          <svg ref='svg' width={this.state.domSize} height={this.state.domSize} />
-          <div style={styles.xContainer}>
-            <div style={styles.innerXContainer}>
-              {this._renderSelectorFromKey('xKey')}
+      <div>
+        {this._renderMenu()}
+        <div style={styles.graphContainer}>
+          <div style={styles.yContainer}>
+            {this._renderSelectorFromKey('yKey')}
+          </div>
+          <div>
+            <svg ref='svg' width={this.state.domSize * 2} height={this.state.domSize} />
+            <div style={styles.xContainer}>
+              <div style={styles.innerXContainer}>
+                {this._renderSelectorFromKey('xKey')}
+              </div>
             </div>
           </div>
         </div>
-        
       </div>
     );
   },
@@ -54,6 +57,26 @@ const Chart = React.createClass({
 
   componentDidUpdate () {
     this._drawSVG();
+  },
+
+  _renderMenu () {
+    const setMode = (newMode) => {
+      this.setState({ mode: newMode });
+    };
+    return (
+      <div className='btn-group' role='group' ariaLabel='...'>
+        <a
+          onClick = { e => {
+            setMode('scatter');
+          }}
+          className={`${this.state.mode === 'scatter' ? 'active ' : ''}btn btn-default`}>Scatterplot</a>
+        <a
+          onClick = { e => {
+            setMode('dist');
+          }}
+          className={`${this.state.mode === 'dist' ? 'active ' : ''}btn btn-default`}>Distribution</a>
+      </div>
+    );
   },
 
   // key 'xKey' 'yKey' or 'cKey'
@@ -202,7 +225,8 @@ const styles = {
     width: AXIS_SELECTOR_WIDTH,
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingRight: '1rem'
   }
 };
 
