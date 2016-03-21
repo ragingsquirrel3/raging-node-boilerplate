@@ -7,7 +7,7 @@ const AXIS_HEIGHT = 30;
 const DEFAULT_DOME_SIZE = 485;
 const NODE_CLASS = 'fc-node';
 const PADDING_SIZE = 30;
-const DEFAULT_NODE_RADIUS = 3;
+const DEFAULT_NODE_RADIUS = 2;
 const TRANSITION_DURATION = 500;
 
 const Chart = React.createClass({
@@ -85,6 +85,8 @@ const Chart = React.createClass({
 
   // key 'xKey' 'yKey' or 'cKey'
   _renderSelectorFromKey (key) {
+    // if dist mode don't render y
+    if (this.state.mode === 'dist' && key === 'yKey') return null;
     let _options = this._getNumericalKeys()
       .map( d => {
         return { value: d, label: d };
@@ -179,6 +181,16 @@ const Chart = React.createClass({
   },
 
   _getYScale () {
+    if (this.state.mode === 'dist') {
+      // calculate mean
+      let total = 0;
+      this.props.data.forEach( d => {
+        total += d[this.state.xKey];
+      });
+      const mean = total / this.props.data.length;
+      // TEMP return a function that returns 1, replace with dist from x scale
+      return d3.scale.linear().range([100, 100]);
+    };
     const _domain = this._getRangeByKey(this.state.yKey);
     const _range = [this.state.domHeight - PADDING_SIZE - AXIS_HEIGHT, PADDING_SIZE];
     return d3.scale.linear()
@@ -213,7 +225,7 @@ const Chart = React.createClass({
 
 function getDefaultData () {
   let _data = [];
-  for (var i = 1800; i >= 0; i--) {
+  for (var i = 2000; i >= 0; i--) {
     _data.push({ id: i, name: `item${i}`, key1: i, key2: Math.random(), key3: Math.random() });
   };
   return _data;
