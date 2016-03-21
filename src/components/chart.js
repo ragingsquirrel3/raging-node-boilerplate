@@ -7,7 +7,7 @@ const AXIS_HEIGHT = 30;
 const NODE_CLASS = 'fc-node';
 const PADDING_SIZE = 30;
 const DEFAULT_NODE_RADIUS = 3;
-const TRANSITION_DURATION = 1000;
+const TRANSITION_DURATION = 500;
 
 const Chart = React.createClass({
   propTypes: {
@@ -25,16 +25,25 @@ const Chart = React.createClass({
     return {
       xKey: numericalKeys[0],
       yKey: numericalKeys[numericalKeys.length - 1],
-      domSize: 550,
+      domSize: 485,
     }
   },
 
   render () {
     return (
-      <div>
-        <svg ref='svg' width={this.state.domSize} height={this.state.domSize} />
-        {this._renderSelectorFromKey('xKey')}
-        {this._renderSelectorFromKey('yKey')}
+      <div style={styles.graphContainer}>
+        <div style={styles.yContainer}>
+          {this._renderSelectorFromKey('yKey')}
+        </div>
+        <div>
+          <svg ref='svg' width={this.state.domSize} height={this.state.domSize} />
+          <div style={styles.xContainer}>
+            <div style={styles.innerXContainer}>
+              {this._renderSelectorFromKey('xKey')}
+            </div>
+          </div>
+        </div>
+        
       </div>
     );
   },
@@ -104,9 +113,8 @@ const Chart = React.createClass({
       .call(yAxisFn);
       
     // render nodes
-    // TODO, add key function
     var nodes = svg.selectAll(`.${NODE_CLASS}`)
-      .data(this.props.data);
+      .data(this.props.data, d => { return d.id; });
     // exit
     nodes.exit().remove();
     // enter
@@ -120,7 +128,7 @@ const Chart = React.createClass({
       });
     // update
     nodes.transition()
-      .delay( (d, i) => { return i / this.props.data.length * TRANSITION_DURATION; })
+      .delay( (d, i) => { return i / this.props.data.length * TRANSITION_DURATION * 3; })
       .duration(TRANSITION_DURATION)
       .attr({
         cx: d => { return xScale(d[this.state.xKey])},
@@ -172,10 +180,30 @@ const Chart = React.createClass({
 
 function getDefaultData () {
   let _data = [];
-  for (var i = 1000; i >= 0; i--) {
-    _data.push({ name: `item${i}`, key1: i, key2: Math.random(), key3: Math.random() });
+  for (var i = 1800; i >= 0; i--) {
+    _data.push({ id: i, name: `item${i}`, key1: i, key2: Math.random(), key3: Math.random() });
   };
   return _data;
+};
+
+const AXIS_SELECTOR_WIDTH = '12rem';
+const styles = {
+  graphContainer: {
+    display: 'flex'
+  },
+  xContainer: {
+    display: 'flex',
+    justifyContent: 'center'
+  },
+  innerXContainer: {
+    width: AXIS_SELECTOR_WIDTH
+  },
+  yContainer: {
+    width: AXIS_SELECTOR_WIDTH,
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center'
+  }
 };
 
 export default Chart;

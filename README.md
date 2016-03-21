@@ -1,6 +1,6 @@
-# My Node.js Boilerplate
+# React Flexy Chart
 
-This is a very basic node project.  You can use it to create more complex node applications.  It already has tests running via `npm test` and development environment running with `npm dev`.
+This is my personal boilerplate for a configurable d3 react chart.
 
 ## Install
 
@@ -12,4 +12,6 @@ Run mocha tests via `npm test` and run all tests in /test directory.
 
 ## Run Development Environment
 run `npm install` if you haven't already installed dependencies.
-run `npm dev`
+run `npm start`
+
+then open http://localhost:8080/webpack-dev-server/
