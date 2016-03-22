@@ -100,7 +100,7 @@ const Chart = React.createClass({
     };
     return (
       <div>
-        <Select options={_options} value={this.state[key]} onChange={_onChange}/>
+        <Select options={_options} value={this.state[key]} onChange={_onChange} clearable={false}/>
       </div>
     );
   },
@@ -175,6 +175,14 @@ const Chart = React.createClass({
     const xScale = this._getXScale();
     const yScale = this._getYScale();
     const svg = d3.select(this.refs.svg);
+    // little helper functions
+    const xFn = d => { return xScale(d.startX); };
+    const x2Fn = d => { return xScale(d.endX); };
+    const yFn = d => { return yScale(d.tq); };
+    const y2Fn = d => { return yScale(d.fq); };
+    const widthFn = d => { return x2Fn(d) - xFn(d); };
+    const heightFn = d => { return y2Fn(d) - yFn(d); };
+    // boxes 
     let boxes = svg.selectAll(`.${BOX_CLASS}`).data(boxData);
     // exit
     boxes.exit().remove();
@@ -182,22 +190,47 @@ const Chart = React.createClass({
     boxes.enter().append('rect')
       .classed(BOX_CLASS, true)
       .attr({
-        x: d => { return xScale(d.startX); },
-        y: d => { return yScale(d.tq); },
-        width: d => { return xScale(d.endX) - xScale(d.startX); },
-        height: d => { return yScale(d.fq) - yScale(d.tq); },
+        x: xFn,
+        y: yFn,
+        width: widthFn,
+        height: heightFn,
         fill: 'none',
         stroke: 'black',
         'stroke-dasharray': '0 1000'
 
       });
     // update
-    boxes.transition().duration(TRANSITION_DURATION)
+    boxes.transition().duration(TRANSITION_DURATION * 2)
       .attr({
-        x: d => { return xScale(d.startX); },
-        y: d => { return yScale(d.tq); },
-        width: d => { return xScale(d.endX) - xScale(d.startX); },
-        height: d => { return yScale(d.fq) - yScale(d.tq); },
+        x: xFn,
+        y: yFn,
+        width: widthFn,
+        height: heightFn,
+        'stroke-dasharray': '1000 0'
+      });
+
+    // means
+    const MEAN_CLASS = `${BOX_CLASS}-mean`;
+    const meanYFn = d => { return (yFn(d) + y2Fn(d)) / 2 };
+    let means = svg.selectAll(`.${MEAN_CLASS}`).data(boxData);
+    means.exit().remove();
+    means.enter().append('line')
+      .classed(MEAN_CLASS, true)
+      .attr({
+        x1: xFn,
+        x2: x2Fn,
+        y1: meanYFn,
+        y2: meanYFn,
+        'stroke-dasharray': '0 1000',
+        stroke: 'black',
+        'stroke-width': 2
+      });
+    means.transition().duration(TRANSITION_DURATION * 2)
+      .attr({
+        x1: xFn,
+        x2: x2Fn,
+        y1: meanYFn,
+        y2: meanYFn,
         'stroke-dasharray': '1000 0'
       });
   },
