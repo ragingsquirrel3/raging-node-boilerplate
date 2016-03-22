@@ -4,8 +4,10 @@ import Select from 'react-select';
 
 const AXIS_WIDTH = 30;
 const AXIS_HEIGHT = 30;
+const BOX_CLASS = 'fc-box';
 const DEFAULT_DOME_SIZE = 485;
 const NODE_CLASS = 'fc-node';
+const NUM_BINS = 10;
 const PADDING_SIZE = 30;
 const DEFAULT_NODE_RADIUS = 2;
 const TRANSITION_DURATION = 500;
@@ -28,7 +30,7 @@ const Chart = React.createClass({
       yKey: numericalKeys[numericalKeys.length - 1],
       domWidth: DEFAULT_DOME_SIZE,
       domHeight: DEFAULT_DOME_SIZE,
-      mode: 'scatter' // 'scatter' or 'dist'
+      mode: 'scatter' // 'scatter' or 'box'
     }
   },
 
@@ -76,9 +78,9 @@ const Chart = React.createClass({
           className={`${this.state.mode === 'scatter' ? 'active ' : ''}btn btn-default`}>Scatterplot</a>
         <a
           onClick = { e => {
-            setMode('dist');
+            setMode('box');
           }}
-          className={`${this.state.mode === 'dist' ? 'active ' : ''}btn btn-default`}>Distribution</a>
+          className={`${this.state.mode === 'box' ? 'active ' : ''}btn btn-default`}>Box Plot</a>
       </div>
     );
   },
@@ -116,13 +118,13 @@ const Chart = React.createClass({
       .tickSize(6, 6)
       .scale(xScale);
     const xTranslate = `translate(${0}, ${yScale.range()[0]})`;
-    var axis = svg.selectAll('g.x-axis').data([null]);
-    axis.enter().append('g')
+    let xAxis = svg.selectAll('g.x-axis').data([null]);
+    xAxis.enter().append('g')
       .classed('x-axis', true)
       .attr({
         transform: xTranslate
       });
-    axis.transition()
+    xAxis.transition()
       .duration(TRANSITION_DURATION)
       .call(xAxisFn);
     // y
@@ -131,18 +133,18 @@ const Chart = React.createClass({
       .tickSize(3, 3)
       .scale(yScale);
     const yTranslate = `translate(${PADDING_SIZE}, ${0})`;
-    var axis = svg.selectAll('g.y-axis').data([null]);
-    axis.enter().append('g')
+    let yAxis = svg.selectAll('g.y-axis').data([null]);
+    yAxis.enter().append('g')
       .classed('y-axis', true)
       .attr({
         transform: yTranslate
       });
-    axis.transition()
+    yAxis.transition()
       .duration(TRANSITION_DURATION)
       .call(yAxisFn);
       
     // render nodes
-    var nodes = svg.selectAll(`.${NODE_CLASS}`)
+    let nodes = svg.selectAll(`.${NODE_CLASS}`)
       .data(this.props.data, d => { return d.id; });
     // exit
     nodes.exit().remove();
@@ -164,6 +166,40 @@ const Chart = React.createClass({
         cy: d => { return yScale(d[this.state.yKey])},
         fill: cScale
       });
+
+    this._drawBoxPlots();
+  },
+
+  _drawBoxPlots () {
+    const boxData = this._getBoxPlotData();
+    const xScale = this._getXScale();
+    const yScale = this._getYScale();
+    const svg = d3.select(this.refs.svg);
+    let boxes = svg.selectAll(`.${BOX_CLASS}`).data(boxData);
+    // exit
+    boxes.exit().remove();
+    // enter
+    boxes.enter().append('rect')
+      .classed(BOX_CLASS, true)
+      .attr({
+        x: d => { return xScale(d.startX); },
+        y: d => { return yScale(d.tq); },
+        width: d => { return xScale(d.endX) - xScale(d.startX); },
+        height: d => { return yScale(d.fq) - yScale(d.tq); },
+        fill: 'none',
+        stroke: 'black',
+        'stroke-dasharray': '0 1000'
+
+      });
+    // update
+    boxes.transition().duration(TRANSITION_DURATION)
+      .attr({
+        x: d => { return xScale(d.startX); },
+        y: d => { return yScale(d.tq); },
+        width: d => { return xScale(d.endX) - xScale(d.startX); },
+        height: d => { return yScale(d.fq) - yScale(d.tq); },
+        'stroke-dasharray': '1000 0'
+      });
   },
 
   _calculateDomSize () {
@@ -181,16 +217,6 @@ const Chart = React.createClass({
   },
 
   _getYScale () {
-    if (this.state.mode === 'dist') {
-      // calculate mean
-      let total = 0;
-      this.props.data.forEach( d => {
-        total += d[this.state.xKey];
-      });
-      const mean = total / this.props.data.length;
-      // TEMP return a function that returns 1, replace with dist from x scale
-      return d3.scale.linear().range([100, 100]);
-    };
     const _domain = this._getRangeByKey(this.state.yKey);
     const _range = [this.state.domHeight - PADDING_SIZE - AXIS_HEIGHT, PADDING_SIZE];
     return d3.scale.linear()
@@ -220,6 +246,41 @@ const Chart = React.createClass({
       if (typeof firstEntry[key] === 'number') numericalKeys.push(key);
     });
     return numericalKeys;
+  },
+
+  // return an array of objects to describe box plots like { mean: 3, min: 1, max: 5, fq: 2, tq: 4, startX: 0, endX: 1 }
+  _getBoxPlotData () {
+    // no boxes of not box mode
+    if (this.state.mode !== 'box') return [];
+    // separate into histograms
+    const data = this.props.data;
+    const histData = d3.layout.histogram()
+      .bins(NUM_BINS)
+      .value( d => { return d[this.state.xKey]; })(data);
+    // map to desired value
+    const xFn = d => { return d[this.state.xKey]; };
+    const yFn = d => { return d[this.state.yKey]; };
+    return histData.map( d => {
+        const _min = d3.min(d, yFn);
+        const _max = d3.max(d, yFn);
+        const _mean = d3.mean(d, yFn);
+        const sorted = d.map(yFn).sort( (a, b) => {
+          return a - b;
+        });
+        const _fq = d3.quantile(sorted, 0.25);
+        const _tq = d3.quantile(sorted, 0.75);
+        const _startX = d3.min(d, xFn);
+        const _endX = d3.max(d, xFn);
+        return {
+          min: _min,
+          max: _max,
+          mean: _mean,
+          fq: _fq,
+          tq: _tq,
+          startX: _startX,
+          endX: _endX
+        };
+    });
   }
 });
 
