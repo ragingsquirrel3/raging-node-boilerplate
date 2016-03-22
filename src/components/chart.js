@@ -8,7 +8,7 @@ const BOX_CLASS = 'fc-box';
 const DEFAULT_DOME_SIZE = 485;
 const NODE_CLASS = 'fc-node';
 const NUM_BINS = 10;
-const PADDING_SIZE = 30;
+const PADDING_SIZE = 40;
 const DEFAULT_NODE_RADIUS = 2;
 const TRANSITION_DURATION = 500;
 
@@ -233,6 +233,51 @@ const Chart = React.createClass({
         y2: meanYFn,
         'stroke-dasharray': '1000 0'
       });
+    const midXFn = d => { return xFn(d) + widthFn(d) / 2; };
+    // top lines
+    const TOP_CLASS = `${BOX_CLASS}-top`;
+    let tops = svg.selectAll(`.${TOP_CLASS}`).data(boxData);
+    tops.exit().remove();
+    tops.enter().append('line')
+      .classed(TOP_CLASS, true)
+      .attr({
+        x1: midXFn,
+        x2: midXFn,
+        y1: yFn,
+        y2: yFn,
+        'stroke-dasharray': '3 3',
+        stroke: 'black',
+        'stroke-width': 2
+      });
+      tops.transition().duration(TRANSITION_DURATION * 2)
+        .attr({
+          x1: midXFn,
+          x2: midXFn,
+          y1: d => { return yScale(d.max); },
+          y2: yFn
+        });
+    // bottom lines
+    const BOTTOM_CLASS = `${BOX_CLASS}-bottom`;
+    let bottoms = svg.selectAll(`.${BOTTOM_CLASS}`).data(boxData);
+    bottoms.exit().remove();
+    bottoms.enter().append('line')
+      .classed(BOTTOM_CLASS, true)
+      .attr({
+        x1: midXFn,
+        x2: midXFn,
+        y1: y2Fn,
+        y2: y2Fn,
+        'stroke-dasharray': '3 3',
+        stroke: 'black',
+        'stroke-width': 2
+      });
+      bottoms.transition().duration(TRANSITION_DURATION * 2)
+        .attr({
+          x1: midXFn,
+          x2: midXFn,
+          y1: y2Fn,
+          y2: d => { return yScale(d.min); },
+        });
   },
 
   _calculateDomSize () {
