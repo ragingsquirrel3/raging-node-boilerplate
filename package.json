@@ -17,6 +17,7 @@
     "react-dom": "^0.14.7",
     "react-redux": "^4.4.1",
     "redux": "^3.3.1",
+    "underscore": "^1.8.3",
     "warning": "^2.0.0"
   },
   "devDependencies": {

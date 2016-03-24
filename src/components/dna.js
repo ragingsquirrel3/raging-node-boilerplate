@@ -1,6 +1,8 @@
+import _ from 'underscore';
 import React from 'react';
+import { connect } from 'react-redux';
 
-export default React.createClass({
+const DNA = React.createClass({
   getDefaultProps () {
     return {
       sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTA'
@@ -9,6 +11,7 @@ export default React.createClass({
   },
 
   render () {
+    console.log(this.props.mRNAPos);
     const seqFns = {
       a: this._renderA,
       t: this._renderT,
@@ -30,6 +33,7 @@ export default React.createClass({
       return <a-entity key={`bp${i}`} rotation={`${r} 0 0`} position={`${x} ${y} 0`}>{bpNode}</a-entity>;
     });
     return (
+      <h1>this.props.mRNAPos</h1>
       <a-scene>
         {bpNodes}
       </a-scene>
@@ -69,6 +73,15 @@ export default React.createClass({
     );
   },
 
+  componentDidMount () {
+    setInterval( () => {
+      console.log(this)
+      this.dispatch({
+        type: 'INCREMENT_TRANSCRIPTION'
+      });
+    }, 500)
+  },
+
   _renderG () {
     return (
       <a-entity>
@@ -80,6 +93,20 @@ export default React.createClass({
     );
   }
 });
+
+const mapStateToProps = (_state) => {
+  let state = _state;
+  return {
+    promoterPos: state.promoterPos,
+    mRNAPos: state.mRNAPos
+  };
+};
+
+const AnimatedDNA = connect(
+  mapStateToProps
+)(DNA);
+
+export default AnimatedDNA;
 
 // bp colors
 const A_COLOR = '#00A51D';

@@ -1,6 +1,15 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
 
 import DNA from './components/dna';
+import dnaApp from './reducers';
 
-ReactDOM.render(<DNA />, document.getElementById('target'));
+// init redux store and render to target element in DOM
+let _store = createStore(dnaApp);
+render(
+	<Provider store={_store}>
+		<DNA />
+	</Provider>
+, document.getElementById('target'));
