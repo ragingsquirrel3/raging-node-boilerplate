@@ -11,7 +11,6 @@ const DNA = React.createClass({
   },
 
   render () {
-    console.log(this.props.mRNAPos);
     const seqFns = {
       a: this._renderA,
       t: this._renderT,
@@ -33,10 +32,12 @@ const DNA = React.createClass({
       return <a-entity key={`bp${i}`} rotation={`${r} 0 0`} position={`${x} ${y} 0`}>{bpNode}</a-entity>;
     });
     return (
-      <h1>this.props.mRNAPos</h1>
-      <a-scene>
-        {bpNodes}
-      </a-scene>
+      <div>
+        <h1>{this.props.mRNAPos}</h1>
+        <a-scene>
+          {bpNodes}
+        </a-scene>
+      </div>
     );
   },
 
@@ -75,8 +76,7 @@ const DNA = React.createClass({
 
   componentDidMount () {
     setInterval( () => {
-      console.log(this)
-      this.dispatch({
+      this.props.dispatch({
         type: 'INCREMENT_TRANSCRIPTION'
       });
     }, 500)
@@ -95,7 +95,7 @@ const DNA = React.createClass({
 });
 
 const mapStateToProps = (_state) => {
-  let state = _state;
+  let state = _state.dnaSceneReducer;
   return {
     promoterPos: state.promoterPos,
     mRNAPos: state.mRNAPos
