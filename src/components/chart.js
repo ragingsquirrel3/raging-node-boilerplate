@@ -1,6 +1,7 @@
 import React from 'react';
 import d3 from 'd3';
 import Select from 'react-select';
+import sigma from 'sigma';
 
 const AXIS_WIDTH = 30;
 const AXIS_HEIGHT = 30;
@@ -44,6 +45,7 @@ const Chart = React.createClass({
             {this._renderSelectorFromKey('yKey')}
           </div>
           <div ref='svgContainer' style={styles.svgContainer}>
+            <div id='sigma-target' style={{ width: this.state.domWidth, height: this.state.domHeight }}/>
             <svg ref='svg' width={this.state.domWidth} height={this.state.domHeight} />
             <div style={styles.xContainer}>
               <div style={styles.innerXContainer}>
@@ -144,31 +146,72 @@ const Chart = React.createClass({
       .duration(TRANSITION_DURATION)
       .call(yAxisFn);
       
-    // render nodes
-    let nodes = svg.selectAll(`.${NODE_CLASS}`)
-      .data(this.props.data, d => { return d.id; });
-    // exit
-    nodes.exit().remove();
-    // enter
-    nodes.enter().append('circle')
-      .classed(NODE_CLASS, true)
-      .attr({
-        cx: d => { return xScale(d[this.state.xKey])},
-        cy: yScale.range()[0],
-        r: DEFAULT_NODE_RADIUS,
-        fill: 'white'
-      });
-    // update
-    nodes.transition()
-      .delay( (d, i) => { return i / this.props.data.length * TRANSITION_DURATION * 3; })
-      .duration(TRANSITION_DURATION)
-      .attr({
-        cx: d => { return xScale(d[this.state.xKey])},
-        cy: d => { return yScale(d[this.state.yKey])},
-        fill: cScale
-      });
+    // // render nodes
+    // let nodes = svg.selectAll(`.${NODE_CLASS}`)
+    //   .data(this.props.data, d => { return d.id; });
+    // // exit
+    // nodes.exit().remove();
+    // // enter
+    // nodes.enter().append('circle')
+    //   .classed(NODE_CLASS, true)
+    //   .attr({
+    //     cx: d => { return xScale(d[this.state.xKey])},
+    //     cy: yScale.range()[0],
+    //     r: DEFAULT_NODE_RADIUS,
+    //     fill: 'white'
+    //   });
+    // // update
+    // nodes.transition()
+    //   .delay( (d, i) => { return i / this.props.data.length * TRANSITION_DURATION * 3; })
+    //   .duration(TRANSITION_DURATION)
+    //   .attr({
+    //     cx: d => { return xScale(d[this.state.xKey])},
+    //     cy: d => { return yScale(d[this.state.yKey])},
+    //     fill: cScale
+    //   });
+
+    // render sigma
+    this._renderSigma();
 
     this._drawBoxPlots();
+  },
+
+  _renderSigma () {
+    const xScale = this._getXScale();
+    const yScale = this._getYScale();
+    const cScale = this._getCScale();
+    let g = {
+      nodes: [
+        {
+          "id": "n0",
+          "label": "A node",
+          "x": 50,
+          "y": 50,
+          "size": 5
+        },
+        {
+          "id": "n1",
+          "label": "A node",
+          "x": 150,
+          "y": 150,
+          "size": 5
+        }
+      ],
+      edges: [
+        {
+          "id": "e0",
+          "source": "n0",
+          "target": "n1"
+        },
+      ]
+    };
+    let s = new sigma({
+      graph: g,
+      container: 'sigma-target',
+      settings: {
+        defaultNodeColor: '#ec5148'
+      }
+    });
   },
 
   _drawBoxPlots () {
