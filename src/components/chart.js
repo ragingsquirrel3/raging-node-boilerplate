@@ -1,12 +1,15 @@
 import React from 'react';
 import d3 from 'd3';
 import Select from 'react-select';
-import sigma from 'sigma';
+
+// *** depends on global sigma from CDN in src/lib/index.html
+// import sigma from GLOBAL
 
 const AXIS_WIDTH = 30;
 const AXIS_HEIGHT = 30;
 const BOX_CLASS = 'fc-box';
 const DEFAULT_DOME_SIZE = 485;
+const EXAMPLE_N = 250;
 const NODE_CLASS = 'fc-node';
 const NUM_BINS = 10;
 const PADDING_SIZE = 40;
@@ -45,7 +48,7 @@ const Chart = React.createClass({
             {this._renderSelectorFromKey('yKey')}
           </div>
           <div ref='svgContainer' style={styles.svgContainer}>
-            <div id='sigma-target' style={{ width: this.state.domWidth, height: this.state.domHeight }}/>
+            <div id='sigma-target' style={{ position: 'absolute', width: this.state.domWidth, height: this.state.domHeight }}/>
             <svg ref='svg' width={this.state.domWidth} height={this.state.domHeight} />
             <div style={styles.xContainer}>
               <div style={styles.innerXContainer}>
@@ -60,7 +63,7 @@ const Chart = React.createClass({
 
   // calc width and set resize events
   componentDidMount () {
-    this._calculateDomSize();
+    // this._calculateDomSize();
     this._drawSVG();
   },
 
@@ -145,34 +148,9 @@ const Chart = React.createClass({
     yAxis.transition()
       .duration(TRANSITION_DURATION)
       .call(yAxisFn);
-      
-    // // render nodes
-    // let nodes = svg.selectAll(`.${NODE_CLASS}`)
-    //   .data(this.props.data, d => { return d.id; });
-    // // exit
-    // nodes.exit().remove();
-    // // enter
-    // nodes.enter().append('circle')
-    //   .classed(NODE_CLASS, true)
-    //   .attr({
-    //     cx: d => { return xScale(d[this.state.xKey])},
-    //     cy: yScale.range()[0],
-    //     r: DEFAULT_NODE_RADIUS,
-    //     fill: 'white'
-    //   });
-    // // update
-    // nodes.transition()
-    //   .delay( (d, i) => { return i / this.props.data.length * TRANSITION_DURATION * 3; })
-    //   .duration(TRANSITION_DURATION)
-    //   .attr({
-    //     cx: d => { return xScale(d[this.state.xKey])},
-    //     cy: d => { return yScale(d[this.state.yKey])},
-    //     fill: cScale
-    //   });
 
-    // render sigma
+    // other rendering
     this._renderSigma();
-
     this._drawBoxPlots();
   },
 
@@ -180,40 +158,38 @@ const Chart = React.createClass({
     const xScale = this._getXScale();
     const yScale = this._getYScale();
     const cScale = this._getCScale();
+    const SIZE = 0.01; // always radius 2
+    const DEFAULT_COLOR = '#1f77b4'; // d3 cool blue
+    const xFn = d => { return xScale(d[this.state.xKey]); };
+    const yFn = d => { return yScale(d[this.state.yKey]); };
+    let nodesData = this.props.data.map( d => {
+      return {
+        id: d.id,
+        x: xFn(d),
+        y: yFn(d),
+        size: SIZE
+      };
+    });
     let g = {
-      nodes: [
-        {
-          "id": "n0",
-          "label": "A node",
-          "x": 50,
-          "y": 50,
-          "size": 5
-        },
-        {
-          "id": "n1",
-          "label": "A node",
-          "x": 150,
-          "y": 150,
-          "size": 5
-        }
-      ],
-      edges: [
-        {
-          "id": "e0",
-          "source": "n0",
-          "target": "n1"
-        },
-      ]
+      nodes: nodesData,
+      edges: []
     };
-    let s = new sigma({
+    // TODO properly update
+    // clear instance var if exists
+    if (typeof this.sigmaInstance !== 'undefined') {
+      this.sigmaInstance.graph.clear();
+    }
+    // create instance var for sigma
+    this.sigmaInstance = new sigma({
       graph: g,
       container: 'sigma-target',
       settings: {
-        defaultNodeColor: '#ec5148'
+        defaultNodeColor: DEFAULT_COLOR
       }
     });
   },
 
+  // d3 svg render
   _drawBoxPlots () {
     const boxData = this._getBoxPlotData();
     const xScale = this._getXScale();
@@ -332,7 +308,7 @@ const Chart = React.createClass({
 
   _getXScale () {
     const _domain = this._getRangeByKey(this.state.xKey);
-    const _range = [PADDING_SIZE, this.state.domWidth -  PADDING_SIZE];
+    const _range = [PADDING_SIZE, this.state.domWidth -  PADDING_SIZE - AXIS_WIDTH];
     return d3.scale.linear()
       .domain(_domain)
       .range(_range);
@@ -408,7 +384,7 @@ const Chart = React.createClass({
 
 function getDefaultData () {
   let _data = [];
-  for (var i = 2000; i >= 0; i--) {
+  for (var i = EXAMPLE_N; i >= 0; i--) {
     let cat = (Math.random() > 0.5) ? 'animal' : 'plant';
     _data.push({
       id: i,
@@ -442,7 +418,8 @@ const styles = {
     paddingRight: '1rem'
   },
   svgContainer: {
-    width: '90%'
+    width: '90%',
+    position: 'relative'
   }
 };
 
