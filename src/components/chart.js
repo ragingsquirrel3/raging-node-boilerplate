@@ -158,10 +158,13 @@ const Chart = React.createClass({
     const xScale = this._getXScale();
     const yScale = this._getYScale();
     const cScale = this._getCScale();
-    const SIZE = 0.01; // always radius 2
+    const SIZE = 3; // always radius 2
     const DEFAULT_COLOR = '#1f77b4'; // d3 cool blue
-    const xFn = d => { return xScale(d[this.state.xKey]); };
-    const yFn = d => { return yScale(d[this.state.yKey]); };
+    // adjust scales for the fact that sigma renders from middle, not edge
+    const xAdjustment = (xScale.range()[1] - xScale.range()[0]) / 2 + PADDING_SIZE * 1.5;
+    const yAdjustment = (yScale.range()[1] - yScale.range()[0]) / 2 - PADDING_SIZE * 1.5;
+    const xFn = d => { return xScale(d[this.state.xKey]) - xAdjustment; };
+    const yFn = d => { return yScale(d[this.state.yKey]) + yAdjustment; };
     let nodesData = this.props.data.map( d => {
       return {
         id: d.id,
@@ -174,6 +177,7 @@ const Chart = React.createClass({
       nodes: nodesData,
       edges: []
     };
+
     // TODO properly update
     // clear instance var if exists
     if (typeof this.sigmaInstance !== 'undefined') {
@@ -184,7 +188,10 @@ const Chart = React.createClass({
       graph: g,
       container: 'sigma-target',
       settings: {
-        defaultNodeColor: DEFAULT_COLOR
+        defaultNodeColor: DEFAULT_COLOR,
+        minNodeSize: 1,
+        maxNodeSize: 10,
+        autoRescale: false
       }
     });
   },
