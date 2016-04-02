@@ -1,43 +1,49 @@
-var w = 960,
-    h = 500,
-    nodes = [],
-    node;
+import d3 from 'd3';
 
-var vis = d3.select("body").append("svg")
-    .attr("width", w)
-    .attr("height", h);
+export default function renderForce () {
+  // from http://bl.ocks.org/mbostock/1062383
+  var w = 960,
+      h = 500,
+      nodes = [],
+      node;
 
-var force = d3.layout.force()
-    .nodes(nodes)
-    .links([])
-    .size([w, h]);
+  var vis = d3.select("body").append("svg")
+      .attr("width", w)
+      .attr("height", h);
 
-force.on("tick", function(e) {
-  vis.selectAll("path")
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
-});
+  var force = d3.layout.force()
+      .nodes(nodes)
+      .links([])
+      .size([w, h]);
 
-setInterval(function(){
-
-  // Add a new random shape.
-  nodes.push({
-    type: d3.svg.symbolTypes[~~(Math.random() * d3.svg.symbolTypes.length)],
-    size: Math.random() * 300 + 100
+  force.on("tick", function(e) {
+    vis.selectAll("path")
+        .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
   });
 
-  // Restart the layout.
-  force.start();
+  setInterval(function(){
 
-  vis.selectAll("path")
-      .data(nodes)
-    .enter().append("path")
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-      .attr("d", d3.svg.symbol()
-        .size(function(d) { return d.size; })
-        .type(function(d) { return d.type; }))
-      .style("fill", "steelblue")
-      .style("stroke", "white")
-      .style("stroke-width", "1.5px")
-      .call(force.drag);
+    // Add a new random shape.
+    nodes.push({
+      type: d3.svg.symbolTypes[~~(Math.random() * d3.svg.symbolTypes.length)],
+      size: Math.random() * 300 + 100
+    });
 
-}, 1000);
+    // Restart the layout.
+    force.start();
+
+    vis.selectAll("path")
+        .data(nodes)
+      .enter().append("path")
+        .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+        .attr("d", d3.svg.symbol()
+          .size(function(d) { return d.size; })
+          .type(function(d) { return d.type; }))
+        .style("fill", "steelblue")
+        .style("stroke", "white")
+        .style("stroke-width", "1.5px")
+        .call(force.drag);
+
+  }, 1000);
+};
+
