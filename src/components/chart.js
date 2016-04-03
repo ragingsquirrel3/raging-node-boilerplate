@@ -9,7 +9,7 @@ const AXIS_WIDTH = 30;
 const AXIS_HEIGHT = 30;
 const BOX_CLASS = 'fc-box';
 const DEFAULT_DOME_SIZE = 485;
-const EXAMPLE_N = 250;
+const EXAMPLE_N = 8250;
 const NODE_CLASS = 'fc-node';
 const NUM_BINS = 10;
 const PADDING_SIZE = 40;
@@ -182,37 +182,24 @@ const Chart = React.createClass({
 
     // animate if sigma already exists
     // from https://github.com/jacomyal/sigma.js/blob/master/examples/animate.html
-    if (typeof this.sigmaInstance !== 'undefined') {
-      console.log('updating ', this.sigmaInstance)
-      sigma.plugins.animate(
-        this.sigmaInstance, nodesData, TRANSITION_DURATION, () => { console.log('done')}
-      );
-    } else {
-    // create instance var for sigma
-      this.sigmaInstance = new sigma({
-        graph: g,
-        container: 'sigma-target',
-        settings: {
-          defaultNodeColor: DEFAULT_COLOR,
-          minNodeSize: 1,
-          maxNodeSize: 10,
-          autoRescale: false,
-          animationsTime: TRANSITION_DURATION
-        }
-      });
-
-      setTimeout( () => {
-        sigma.plugins.animate(
-        this.sigmaInstance,
-        { x: 'x2', y: 'y2', size: 'size' },
-        {
-          nodes: [1,2,3,4,5,6,7,8, 9,10],
-          // duration: 2000,
-          // easing: 'cubicInOut',
-          onComplete: function () { console.log('done') }
-        });
-      }, 2000)
+    if (typeof this.sigmaInstance === 'object') {
+      this.sigmaInstance.graph.clear();
+      this.sigmaInstance.refresh();
     }
+    this.sigmaInstance = new sigma({
+      graph: g,
+      container: 'sigma-target',
+      settings: {
+        defaultNodeColor: DEFAULT_COLOR,
+        minNodeSize: 1,
+        maxNodeSize: 10,
+        autoRescale: false,
+        animationsTime: TRANSITION_DURATION
+      }
+    });
+    // sigma.plugins.animate(
+    //   this.sigmaInstance, nodesData, TRANSITION_DURATION, () => { console.log('done')}
+    // );
   },
 
   // d3 svg render
