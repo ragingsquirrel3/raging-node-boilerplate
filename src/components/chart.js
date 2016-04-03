@@ -28,6 +28,7 @@ const Chart = React.createClass({
     return {
       xKey: numericalKeys[0],
       yKey: numericalKeys[numericalKeys.length - 1],
+      cKey: numericalKeys[numericalKeys.length - 1],
       domWidth: DEFAULT_DOME_SIZE,
       domHeight: DEFAULT_DOME_SIZE,
       mode: 'scatter' // 'scatter' or 'box'
@@ -339,25 +340,25 @@ const Chart = React.createClass({
     const xFn = d => { return d[this.state.xKey]; };
     const yFn = d => { return d[this.state.yKey]; };
     return histData.map( d => {
-        const _min = d3.min(d, yFn);
-        const _max = d3.max(d, yFn);
-        const _mean = d3.mean(d, yFn);
-        const sorted = d.map(yFn).sort( (a, b) => {
-          return a - b;
-        });
-        const _fq = d3.quantile(sorted, 0.25);
-        const _tq = d3.quantile(sorted, 0.75);
-        const _startX = d3.min(d, xFn);
-        const _endX = d3.max(d, xFn);
-        return {
-          min: _min,
-          max: _max,
-          mean: _mean,
-          fq: _fq,
-          tq: _tq,
-          startX: _startX,
-          endX: _endX
-        };
+      const _min = d3.min(d, yFn);
+      const _max = d3.max(d, yFn);
+      const _mean = d3.mean(d, yFn);
+      const sorted = d.map(yFn).sort( (a, b) => {
+        return a - b;
+      });
+      const _fq = d3.quantile(sorted, 0.25);
+      const _tq = d3.quantile(sorted, 0.75);
+      const _startX = d3.min(d, xFn);
+      const _endX = d3.max(d, xFn);
+      return {
+        min: _min,
+        max: _max,
+        mean: _mean,
+        fq: _fq,
+        tq: _tq,
+        startX: _startX,
+        endX: _endX
+      };
     });
   }
 });
@@ -365,7 +366,15 @@ const Chart = React.createClass({
 function getDefaultData () {
   let _data = [];
   for (var i = 2000; i >= 0; i--) {
-    _data.push({ id: i, name: `item${i}`, key1: i, key2: Math.random(), key3: Math.random() });
+    let cat = (Math.random() > 0.5) ? 'animal' : 'plant';
+    _data.push({
+      id: i,
+      name: `item${i}`,
+      key1: i,
+      key2: Math.random(),
+      key3: Math.random(),
+      category: cat
+    });
   };
   return _data;
 };
