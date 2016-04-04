@@ -14,7 +14,7 @@ const NODE_CLASS = 'fc-node';
 const NUM_BINS = 10;
 const PADDING_SIZE = 40;
 const DEFAULT_NODE_RADIUS = 2;
-const TRANSITION_DURATION = 500;
+const TRANSITION_DURATION = 1000;
 
 const Chart = React.createClass({
   propTypes: {
@@ -165,13 +165,21 @@ const Chart = React.createClass({
     const yAdjustment = (yScale.range()[1] - yScale.range()[0]) / 2 - PADDING_SIZE * 1.5;
     const xFn = d => { return xScale(d[this.state.xKey]) - xAdjustment; };
     const yFn = d => { return yScale(d[this.state.yKey]) + yAdjustment; };
-    let nodesData = this.props.data.map( d => {
+    // always put 'correct' position at x2, y2, old position (if known) at x, y
+    // uses instance var this.lastGraph
+    let hasLastRenderedData = (typeof this.lastGraph === 'object');
+    const defaultY = yScale.range()[0];
+    let nodesData = this.props.data.map( (d, i) => {
+      let isUpdate = false;
+      if (hasLastRenderedData) {
+        isUpdate = typeof this.lastGraph.nodes[i] === 'object';
+      }
       return {
         id: d.id,
-        x: xFn(d),
-        y: yFn(d),
-        x2: 0,
-        y2: 0,
+        x: isUpdate ? this.lastGraph.nodes[i].x2 : xFn(d),
+        y: isUpdate ? this.lastGraph.nodes[i].y2 : defaultY,
+        x2: xFn(d),
+        y2: yFn(d),
         size: SIZE
       };
     });
@@ -186,6 +194,7 @@ const Chart = React.createClass({
       this.sigmaInstance.graph.clear();
       this.sigmaInstance.refresh();
     }
+    // re-render to 'old' position with values at x1, x2
     this.sigmaInstance = new sigma({
       graph: g,
       container: 'sigma-target',
@@ -197,9 +206,17 @@ const Chart = React.createClass({
         animationsTime: TRANSITION_DURATION
       }
     });
-    // sigma.plugins.animate(
-    //   this.sigmaInstance, nodesData, TRANSITION_DURATION, () => { console.log('done')}
-    // );
+    // save that graph to instance var
+    this.lastGraph = g;
+    // animate to new 'correct' positions
+    sigma.plugins.animate(
+      this.sigmaInstance,
+      { x: 'x2', y: 'y2', size: 'size' },
+      {
+        duration: TRANSITION_DURATION,
+        // onComplete: function () { console.log('done') }
+      }
+    );
   },
 
   // d3 svg render
