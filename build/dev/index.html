@@ -12,9 +12,18 @@
                 font-family: 'Droid Serif', serif;
             }
             h1 {
-                font-family: 'Fjalla One', sans-serif;;
+                font-family: 'Fjalla One', sans-serif;
                 font-size: 64px;
-                margin: 3rem 0 12rem 0;
+                margin: 3rem 0 3rem 0;
+            }
+            h3 {
+                font-family: 'Fjalla One', sans-serif;
+                color: black;
+                margin: 3rem 0 30rem 0;
+                text-align: center;
+            }
+            .scroll-prompt-text {
+                margin-right: 1rem;
             }
             .scroll-target {
                 position: relative;
@@ -26,17 +35,17 @@
                 background: white;
                 position: absolute;
                 width: 100%;
-                height: 100%;
+                height: 5000px;
                 opacity: 0.75;
             }
-            .scroll-target-text h1, p {
+            .scroll-target-text h1, h3, p, ol {
                 position: relative;
             }
-            .scroll-target p {
-                margin: 0 0 5rem;
-            }
-            .scroll-target-text-wrapper {
+            .scroll-target-text {
                 padding: 1rem;
+            }
+            .scroll-target-text p {
+                margin: 0 0 12rem;
             }
         </style>
     </head>
@@ -44,10 +53,11 @@
       <div class="container">
         <div class="row">
           <div class="col-md-6 scroll-target" id="j-scroll-target">
-                <div class="scroll-target-text">
                 <div class="scroll-target-bg"></div>
+                <div class="scroll-target-text">
             <h1>The Central Dogma of Molecular Biology</h1>
-            <p>Travis Sheppard, text from <a href="https://en.wikipedia.org/wiki/Transcription_(genetics)">Wikipedia's excellent article</a></p>
+            <p>Text is taken from <a href="https://en.wikipedia.org/wiki/Transcription_(genetics)">Wikipedia's excellent article on the subject</a>.</p>
+            <h3><span class="scroll-prompt-text">Scroll Down to Begin</span><span class="glyphicon glyphicon-chevron-down"></span></h3>
             <p>
           Transcription is the first step of gene expression, in which a particular segment of DNA is copied into RNA (mRNA) by the enzyme RNA polymerase.
             </p>
