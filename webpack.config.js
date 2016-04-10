@@ -4,8 +4,7 @@ const path = require('path');
 module.exports = {
   entry: './src/entry.js',
   output: {
-    path: path.resolve(__dirname, 'build/prod/assets'),
-    publicPath: '/assets/',
+    path: path.resolve(__dirname, 'build/dev/js/'),
     filename: 'bundle.js'
   },
   module: {
