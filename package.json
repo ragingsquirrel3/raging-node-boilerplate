@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "A boilerplate node.js project with tests",
   "scripts": {
-    "start": "cp src/lib/index.html build/dev/index.html && cp src/vendor/sigma.plugins.animate.js build/dev/js/sigma.plugins.animate.js && webpack-dev-server --content-base build/dev/",
+    "start": "cp src/lib/index.html build/dev/index.html && cp src/lib/protein.json build/dev/protein.json && cp src/vendor/sigma.plugins.animate.js build/dev/js/sigma.plugins.animate.js && webpack-dev-server --content-base build/dev/",
     "test": "mocha test --compilers js:babel-register -t 10000"
   },
   "authors": [
