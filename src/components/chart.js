@@ -161,8 +161,8 @@ const Chart = React.createClass({
     const SIZE = 3; // always radius 2
     const DEFAULT_COLOR = '#1f77b4'; // d3 cool blue
     // adjust scales for the fact that sigma renders from middle, not edge
-    const xAdjustment = (xScale.range()[1] - xScale.range()[0]) / 2 + PADDING_SIZE * 1.5;
-    const yAdjustment = (yScale.range()[1] - yScale.range()[0]) / 2 - PADDING_SIZE * 1.5;
+    const xAdjustment = (xScale.range()[1] - xScale.range()[0]) / 2 + PADDING_SIZE * 1.5 - 5;
+    const yAdjustment = (yScale.range()[1] - yScale.range()[0]) / 2 - PADDING_SIZE * 1.5 + 5;
     const xFn = d => { return xScale(d[this.state.xKey]) - xAdjustment; };
     const yFn = d => { return yScale(d[this.state.yKey]) + yAdjustment; };
     // always put 'correct' position at x2, y2, old position (if known) at x, y
