@@ -30,7 +30,7 @@ const DNA = React.createClass({
     const bpNodes = this.props.sequence.split('').map( (d, i) => {
       let bp = d.toLowerCase();
       let bpSequenceFn = seqFns[bp];
-      let bpNode = bpSequenceFn();
+      let bpNode = bpSequenceFn(i);
       x += STEP_FACTOR_X;
       r += STEP_FACTOR_R;
       if (r > 360) {
@@ -66,27 +66,27 @@ const DNA = React.createClass({
   // (0.5 + Math.abs(0 - tSiteDistance)
 
   _getPlusOuterPos (tSiteDistance) {
-    let p = (tSiteDistance > 5) ? (0.5 + Math.abs(0 - tSiteDistance)) : 0.5
+    let p = (tSiteDistance < 5) ? (0.5 + (5 - tSiteDistance) / 5) : 0.5
     return `0 -${p} 0`;
   },
 
   _getMinusOuterPos (tSiteDistance) {
-    let p = (tSiteDistance > 5) ? (0.5 + Math.abs(5 - tSiteDistance)) : 0.5
+    let p = (tSiteDistance < 5) ? (0.5 + (5 - tSiteDistance) / 5) : 0.5
     return `0 ${p} 0`;
   },
 
   _getPlusInnerPos (tSiteDistance) {
-    let p = (tSiteDistance > 5) ? 1 : 0.25
+    let p = (tSiteDistance < 5) ? (0.5 + (5 - tSiteDistance) / 5) - 0.25 : 0.25
     return `0 -${p} 0`;
   },
 
   _getMinusInnerPos (tSiteDistance) {
-    let p = (tSiteDistance > 5) ? 1 : 0.25
+    let p = (tSiteDistance < 5) ? (0.5 + (5 - tSiteDistance) / 5) - 0.25 : 0.25
     return `0 ${p} 0`;
   },
 
-  _renderA () {
-    let distance = 0;
+  _renderA (coord) {
+    let distance = Math.abs(this.props.mRNAPos - coord);
     return (
       <a-entity>
         <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
@@ -97,8 +97,8 @@ const DNA = React.createClass({
     );
   },
 
-  _renderT () {
-    let distance = 0;
+  _renderT (coord) {
+    let distance = Math.abs(this.props.mRNAPos - coord);
     return (
       <a-entity>
         <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
@@ -109,8 +109,8 @@ const DNA = React.createClass({
     );
   },
 
-  _renderC () {
-    let distance = 0;
+  _renderC (coord) {
+    let distance = Math.abs(this.props.mRNAPos - coord);
     return (
       <a-entity>
         <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
@@ -121,8 +121,8 @@ const DNA = React.createClass({
     );
   },
 
-  _renderG () {
-    let distance = 0;
+  _renderG (coord) {
+    let distance = Math.abs(this.props.mRNAPos - coord);
     return (
       <a-entity>
         <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
@@ -136,7 +136,16 @@ const DNA = React.createClass({
   componentDidMount () {
     const MAX = 0.5;
     const N_PARTICLES = 100;
-    const DELAY = 2000;
+    const DELAY = 10;
+
+    setInterval( () => {
+      this.props.dispatch({ type: 'INCREMENT_TRANSCRIPTION', value: 0.1 });
+    }, DELAY)
+
+    // TEMP ***
+    return;
+    // ***
+
     let nodeInterval = 0;
     // d3 force fn a la https://github.com/mbostock/d3/wiki/Force-Layout
     // TEMP no links

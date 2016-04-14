@@ -21180,7 +21180,7 @@
 	    var bpNodes = this.props.sequence.split('').map(function (d, i) {
 	      var bp = d.toLowerCase();
 	      var bpSequenceFn = seqFns[bp];
-	      var bpNode = bpSequenceFn();
+	      var bpNode = bpSequenceFn(i);
 	      x += STEP_FACTOR_X;
 	      r += STEP_FACTOR_R;
 	      if (r > 360) {
@@ -21226,23 +21226,23 @@
 	  // (0.5 + Math.abs(0 - tSiteDistance)
 
 	  _getPlusOuterPos: function _getPlusOuterPos(tSiteDistance) {
-	    var p = tSiteDistance > 5 ? 0.5 + Math.abs(0 - tSiteDistance) : 0.5;
+	    var p = tSiteDistance < 5 ? 0.5 + (5 - tSiteDistance) / 5 : 0.5;
 	    return '0 -' + p + ' 0';
 	  },
 	  _getMinusOuterPos: function _getMinusOuterPos(tSiteDistance) {
-	    var p = tSiteDistance > 5 ? 0.5 + Math.abs(5 - tSiteDistance) : 0.5;
+	    var p = tSiteDistance < 5 ? 0.5 + (5 - tSiteDistance) / 5 : 0.5;
 	    return '0 ' + p + ' 0';
 	  },
 	  _getPlusInnerPos: function _getPlusInnerPos(tSiteDistance) {
-	    var p = tSiteDistance > 5 ? 1 : 0.25;
+	    var p = tSiteDistance < 5 ? 0.5 + (5 - tSiteDistance) / 5 - 0.25 : 0.25;
 	    return '0 -' + p + ' 0';
 	  },
 	  _getMinusInnerPos: function _getMinusInnerPos(tSiteDistance) {
-	    var p = tSiteDistance > 5 ? 1 : 0.25;
+	    var p = tSiteDistance < 5 ? 0.5 + (5 - tSiteDistance) / 5 - 0.25 : 0.25;
 	    return '0 ' + p + ' 0';
 	  },
-	  _renderA: function _renderA() {
-	    var distance = 0;
+	  _renderA: function _renderA(coord) {
+	    var distance = Math.abs(this.props.mRNAPos - coord);
 	    return _react2.default.createElement(
 	      'a-entity',
 	      null,
@@ -21252,8 +21252,8 @@
 	      _react2.default.createElement('a-sphere', { position: this._getMinusOuterPos(distance), radius: '0.10', color: '#2DD3D6' })
 	    );
 	  },
-	  _renderT: function _renderT() {
-	    var distance = 0;
+	  _renderT: function _renderT(coord) {
+	    var distance = Math.abs(this.props.mRNAPos - coord);
 	    return _react2.default.createElement(
 	      'a-entity',
 	      null,
@@ -21263,8 +21263,8 @@
 	      _react2.default.createElement('a-sphere', { position: this._getMinusOuterPos(distance), radius: '0.10', color: '#2DD3D6' })
 	    );
 	  },
-	  _renderC: function _renderC() {
-	    var distance = 0;
+	  _renderC: function _renderC(coord) {
+	    var distance = Math.abs(this.props.mRNAPos - coord);
 	    return _react2.default.createElement(
 	      'a-entity',
 	      null,
@@ -21274,8 +21274,8 @@
 	      _react2.default.createElement('a-sphere', { position: this._getMinusOuterPos(distance), radius: '0.10', color: '#2DD3D6' })
 	    );
 	  },
-	  _renderG: function _renderG() {
-	    var distance = 0;
+	  _renderG: function _renderG(coord) {
+	    var distance = Math.abs(this.props.mRNAPos - coord);
 	    return _react2.default.createElement(
 	      'a-entity',
 	      null,
@@ -21290,7 +21290,16 @@
 
 	    var MAX = 0.5;
 	    var N_PARTICLES = 100;
-	    var DELAY = 2000;
+	    var DELAY = 10;
+
+	    setInterval(function () {
+	      _this.props.dispatch({ type: 'INCREMENT_TRANSCRIPTION', value: 0.1 });
+	    }, DELAY);
+
+	    // TEMP ***
+	    return;
+	    // ***
+
 	    var nodeInterval = 0;
 	    // d3 force fn a la https://github.com/mbostock/d3/wiki/Force-Layout
 	    // TEMP no links
@@ -32504,7 +32513,9 @@
 	  var state = _underscore2.default.clone(_state);
 	  switch (action.type) {
 	    case 'INCREMENT_TRANSCRIPTION':
-	      state.mRNAPos++;
+	      var value = typeof action.value === 'number' ? action.value : 1;
+	      state.mRNAPos += value;
+	      if (state.mRNAPos > 40) state.mRNAPos = 0;
 	      return state;
 	    default:
 	      return DEFAULT_STATE;
