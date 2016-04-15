@@ -6,8 +6,8 @@ import d3 from 'd3';
 const DNA = React.createClass({
   getDefaultProps () {
     return {
-      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTA'
-      // sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTATATGTATACGAATGGAAAAATTTATCCGAATCTCGGCCCGACTGCCAGCTTGCCGGGAGAACAAACAACCGCCAATATATGTATATGTATATTTATATAGATGTCCAGATGCATTATTGTGAATGTGAGTTATGCGAAGATACTTGTTTGTATAGCTCGTTCAACTCATTGATGGAGAATGGAATGTCAATATCGTTTAGTGCTGTGTTCGTAGTTGTATATGCGCTTCCTGTTTCATTGATACTAACAGGTTCCATAGATATACTAGGGCTTTGCTCAAGCGGATCGAGGGAAGCCAAATCAAGATTGTCAATGCTGTCGGCCTTAATTTCTCCGTTTTGCAGAGGTGGCTTCAAACTCGGCAATGTGGTTGTCATGTCTACATCCGACGAGCGACCATTTAGGCCCAAAAGAACGTCCAGATCTGCAATACCGAGACCATTGACATGCGCTGCTTCATCATTTGCCCTTCTGTGGCATGACCCTCCCTTTGATTTCCGGCTGCTTTTCCTCTTGGTATGA'
+      // sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTA'
+      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTATATGTATACGAATGGAAAAATTTATCCGAATCTC'
     }
   },
 
@@ -40,11 +40,12 @@ const DNA = React.createClass({
     });
 
     let rNodes = this._renderRNodes();
+    let RNAPolNode = this._renderRNAPolNode();
     return (
       <div>
-        <h1>{this.props.mRNAPos}</h1>
         <a-scene>
           {rNodes}
+          {RNAPolNode}
           {bpNodes}
         </a-scene>
       </div>
@@ -66,7 +67,13 @@ const DNA = React.createClass({
     );
   },
 
-  // (0.5 + Math.abs(0 - tSiteDistance)
+  _renderRNAPolNode () {
+     return (
+        <a-entity position={`${this.props.mRNAPos * STEP_FACTOR_X - 10} 2 0`} rotation={`${this.props.mRNAPos * STEP_FACTOR_R + 90} 2.25 0`}>
+          <a-sphere position='0 0 1'  radius='0.5' color='#684A3A'></a-sphere>
+        </a-entity>
+      );
+  },
 
   _getPlusOuterPos (tSiteDistance) {
     let p = (tSiteDistance < 5) ? (0.5 + (5 - tSiteDistance) / 5) : 0.5
@@ -92,10 +99,10 @@ const DNA = React.createClass({
     let distance = Math.abs(this.props.mRNAPos - coord);
     return (
       <a-entity>
-        <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
+        <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color={B_COLOR}></a-sphere>
         <a-cylinder position={this._getPlusInnerPos(distance)} rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={A_COLOR}></a-cylinder>
         <a-cylinder position={this._getMinusInnerPos(distance)} rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={T_COLOR}></a-cylinder>
-        <a-sphere position={this._getMinusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
+        <a-sphere position={this._getMinusOuterPos(distance)} radius="0.10" color={B_COLOR}></a-sphere>
       </a-entity>
     );
   },
@@ -104,10 +111,10 @@ const DNA = React.createClass({
     let distance = Math.abs(this.props.mRNAPos - coord);
     return (
       <a-entity>
-        <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
+        <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color={B_COLOR}></a-sphere>
         <a-cylinder position={this._getPlusInnerPos(distance)} rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={T_COLOR}></a-cylinder>
         <a-cylinder position={this._getMinusInnerPos(distance)} rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={A_COLOR}></a-cylinder>
-        <a-sphere position={this._getMinusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
+        <a-sphere position={this._getMinusOuterPos(distance)} radius="0.10" color={B_COLOR}></a-sphere>
       </a-entity>
     );
   },
@@ -116,10 +123,10 @@ const DNA = React.createClass({
     let distance = Math.abs(this.props.mRNAPos - coord);
     return (
       <a-entity>
-        <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
+        <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color={B_COLOR}></a-sphere>
         <a-cylinder position={this._getPlusInnerPos(distance)} rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={C_COLOR}></a-cylinder>
         <a-cylinder position={this._getMinusInnerPos(distance)} rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={G_COLOR}></a-cylinder>
-        <a-sphere position={this._getMinusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
+        <a-sphere position={this._getMinusOuterPos(distance)} radius="0.10" color={B_COLOR}></a-sphere>
       </a-entity>
     );
   },
@@ -128,10 +135,10 @@ const DNA = React.createClass({
     let distance = Math.abs(this.props.mRNAPos - coord);
     return (
       <a-entity>
-        <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
+        <a-sphere position={this._getPlusOuterPos(distance)} radius="0.10" color={B_COLOR}></a-sphere>
         <a-cylinder position={this._getPlusInnerPos(distance)} rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={G_COLOR}></a-cylinder>
         <a-cylinder position={this._getMinusInnerPos(distance)} rotation="0 0 0" radius="0.05" height="0.5" open-ended="false" color={C_COLOR}></a-cylinder>
-        <a-sphere position={this._getMinusOuterPos(distance)} radius="0.10" color="#2DD3D6"></a-sphere>
+        <a-sphere position={this._getMinusOuterPos(distance)} radius="0.10" color={B_COLOR}></a-sphere>
       </a-entity>
     );
   },
@@ -140,9 +147,9 @@ const DNA = React.createClass({
     // don't animate particles for now
     // this._setupParticleAnimation();
     // animate DNA splitting
-    const DELAY = 10;
+    const DELAY = 20;
     setInterval( () => {
-      this.props.dispatch({ type: 'INCREMENT_TRANSCRIPTION', value: 0.1 });
+      this.props.dispatch({ type: 'INCREMENT_TRANSCRIPTION', value: 0.05 });
     }, DELAY);
   },
 
@@ -213,6 +220,7 @@ const A_COLOR = '#00A51D';
 const T_COLOR = '#F25270';
 const C_COLOR = '#F2E422';
 const G_COLOR = '#77468C';
+const B_COLOR = '#3499FB';
 
 const STEP_FACTOR_X = 0.35;
 const STEP_FACTOR_R = 22;

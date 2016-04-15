@@ -21158,8 +21158,8 @@
 	  displayName: 'DNA',
 	  getDefaultProps: function getDefaultProps() {
 	    return {
-	      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTA'
-	      // sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTATATGTATACGAATGGAAAAATTTATCCGAATCTCGGCCCGACTGCCAGCTTGCCGGGAGAACAAACAACCGCCAATATATGTATATGTATATTTATATAGATGTCCAGATGCATTATTGTGAATGTGAGTTATGCGAAGATACTTGTTTGTATAGCTCGTTCAACTCATTGATGGAGAATGGAATGTCAATATCGTTTAGTGCTGTGTTCGTAGTTGTATATGCGCTTCCTGTTTCATTGATACTAACAGGTTCCATAGATATACTAGGGCTTTGCTCAAGCGGATCGAGGGAAGCCAAATCAAGATTGTCAATGCTGTCGGCCTTAATTTCTCCGTTTTGCAGAGGTGGCTTCAAACTCGGCAATGTGGTTGTCATGTCTACATCCGACGAGCGACCATTTAGGCCCAAAAGAACGTCCAGATCTGCAATACCGAGACCATTGACATGCGCTGCTTCATCATTTGCCCTTCTGTGGCATGACCCTCCCTTTGATTTCCGGCTGCTTTTCCTCTTGGTATGA'
+	      // sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTA'
+	      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTATATGTATACGAATGGAAAAATTTATCCGAATCTC'
 	    };
 	  },
 	  getInitialState: function getInitialState() {
@@ -21194,18 +21194,15 @@
 	    });
 
 	    var rNodes = this._renderRNodes();
+	    var RNAPolNode = this._renderRNAPolNode();
 	    return _react2.default.createElement(
 	      'div',
 	      null,
 	      _react2.default.createElement(
-	        'h1',
-	        null,
-	        this.props.mRNAPos
-	      ),
-	      _react2.default.createElement(
 	        'a-scene',
 	        null,
 	        rNodes,
+	        RNAPolNode,
 	        bpNodes
 	      )
 	    );
@@ -21224,10 +21221,13 @@
 	      nodes
 	    );
 	  },
-
-
-	  // (0.5 + Math.abs(0 - tSiteDistance)
-
+	  _renderRNAPolNode: function _renderRNAPolNode() {
+	    return _react2.default.createElement(
+	      'a-entity',
+	      { position: this.props.mRNAPos * STEP_FACTOR_X - 10 + ' 2 0', rotation: this.props.mRNAPos * STEP_FACTOR_R + 90 + ' 2.25 0' },
+	      _react2.default.createElement('a-sphere', { position: '0 0 1', radius: '0.5', color: '#684A3A' })
+	    );
+	  },
 	  _getPlusOuterPos: function _getPlusOuterPos(tSiteDistance) {
 	    var p = tSiteDistance < 5 ? 0.5 + (5 - tSiteDistance) / 5 : 0.5;
 	    return '0 -' + p + ' 0';
@@ -21249,10 +21249,10 @@
 	    return _react2.default.createElement(
 	      'a-entity',
 	      null,
-	      _react2.default.createElement('a-sphere', { position: this._getPlusOuterPos(distance), radius: '0.10', color: '#2DD3D6' }),
+	      _react2.default.createElement('a-sphere', { position: this._getPlusOuterPos(distance), radius: '0.10', color: B_COLOR }),
 	      _react2.default.createElement('a-cylinder', { position: this._getPlusInnerPos(distance), rotation: '0 0 0', radius: '0.05', height: '0.5', 'open-ended': 'false', color: A_COLOR }),
 	      _react2.default.createElement('a-cylinder', { position: this._getMinusInnerPos(distance), rotation: '0 0 0', radius: '0.05', height: '0.5', 'open-ended': 'false', color: T_COLOR }),
-	      _react2.default.createElement('a-sphere', { position: this._getMinusOuterPos(distance), radius: '0.10', color: '#2DD3D6' })
+	      _react2.default.createElement('a-sphere', { position: this._getMinusOuterPos(distance), radius: '0.10', color: B_COLOR })
 	    );
 	  },
 	  _renderT: function _renderT(coord) {
@@ -21260,10 +21260,10 @@
 	    return _react2.default.createElement(
 	      'a-entity',
 	      null,
-	      _react2.default.createElement('a-sphere', { position: this._getPlusOuterPos(distance), radius: '0.10', color: '#2DD3D6' }),
+	      _react2.default.createElement('a-sphere', { position: this._getPlusOuterPos(distance), radius: '0.10', color: B_COLOR }),
 	      _react2.default.createElement('a-cylinder', { position: this._getPlusInnerPos(distance), rotation: '0 0 0', radius: '0.05', height: '0.5', 'open-ended': 'false', color: T_COLOR }),
 	      _react2.default.createElement('a-cylinder', { position: this._getMinusInnerPos(distance), rotation: '0 0 0', radius: '0.05', height: '0.5', 'open-ended': 'false', color: A_COLOR }),
-	      _react2.default.createElement('a-sphere', { position: this._getMinusOuterPos(distance), radius: '0.10', color: '#2DD3D6' })
+	      _react2.default.createElement('a-sphere', { position: this._getMinusOuterPos(distance), radius: '0.10', color: B_COLOR })
 	    );
 	  },
 	  _renderC: function _renderC(coord) {
@@ -21271,10 +21271,10 @@
 	    return _react2.default.createElement(
 	      'a-entity',
 	      null,
-	      _react2.default.createElement('a-sphere', { position: this._getPlusOuterPos(distance), radius: '0.10', color: '#2DD3D6' }),
+	      _react2.default.createElement('a-sphere', { position: this._getPlusOuterPos(distance), radius: '0.10', color: B_COLOR }),
 	      _react2.default.createElement('a-cylinder', { position: this._getPlusInnerPos(distance), rotation: '0 0 0', radius: '0.05', height: '0.5', 'open-ended': 'false', color: C_COLOR }),
 	      _react2.default.createElement('a-cylinder', { position: this._getMinusInnerPos(distance), rotation: '0 0 0', radius: '0.05', height: '0.5', 'open-ended': 'false', color: G_COLOR }),
-	      _react2.default.createElement('a-sphere', { position: this._getMinusOuterPos(distance), radius: '0.10', color: '#2DD3D6' })
+	      _react2.default.createElement('a-sphere', { position: this._getMinusOuterPos(distance), radius: '0.10', color: B_COLOR })
 	    );
 	  },
 	  _renderG: function _renderG(coord) {
@@ -21282,10 +21282,10 @@
 	    return _react2.default.createElement(
 	      'a-entity',
 	      null,
-	      _react2.default.createElement('a-sphere', { position: this._getPlusOuterPos(distance), radius: '0.10', color: '#2DD3D6' }),
+	      _react2.default.createElement('a-sphere', { position: this._getPlusOuterPos(distance), radius: '0.10', color: B_COLOR }),
 	      _react2.default.createElement('a-cylinder', { position: this._getPlusInnerPos(distance), rotation: '0 0 0', radius: '0.05', height: '0.5', 'open-ended': 'false', color: G_COLOR }),
 	      _react2.default.createElement('a-cylinder', { position: this._getMinusInnerPos(distance), rotation: '0 0 0', radius: '0.05', height: '0.5', 'open-ended': 'false', color: C_COLOR }),
-	      _react2.default.createElement('a-sphere', { position: this._getMinusOuterPos(distance), radius: '0.10', color: '#2DD3D6' })
+	      _react2.default.createElement('a-sphere', { position: this._getMinusOuterPos(distance), radius: '0.10', color: B_COLOR })
 	    );
 	  },
 	  componentDidMount: function componentDidMount() {
@@ -21294,9 +21294,9 @@
 	    // don't animate particles for now
 	    // this._setupParticleAnimation();
 	    // animate DNA splitting
-	    var DELAY = 10;
+	    var DELAY = 20;
 	    setInterval(function () {
-	      _this.props.dispatch({ type: 'INCREMENT_TRANSCRIPTION', value: 0.1 });
+	      _this.props.dispatch({ type: 'INCREMENT_TRANSCRIPTION', value: 0.05 });
 	    }, DELAY);
 	  },
 
@@ -21363,6 +21363,7 @@
 	var T_COLOR = '#F25270';
 	var C_COLOR = '#F2E422';
 	var G_COLOR = '#77468C';
+	var B_COLOR = '#3499FB';
 
 	var STEP_FACTOR_X = 0.35;
 	var STEP_FACTOR_R = 22;
