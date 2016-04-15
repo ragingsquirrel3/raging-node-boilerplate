@@ -49,7 +49,7 @@ const Chart = React.createClass({
           </div>
           <div ref='svgContainer' style={styles.svgContainer}>
             <div id='sigma-target' style={{ position: 'absolute', width: this.state.domWidth, height: this.state.domHeight }}/>
-            <svg ref='svg' width={this.state.domWidth} height={this.state.domHeight} />
+            <svg ref='svg' style={styles.svg} width={this.state.domWidth} height={this.state.domHeight} />
             <div style={styles.xContainer}>
               <div style={styles.innerXContainer}>
                 {this._renderSelectorFromKey('xKey')}
@@ -158,7 +158,7 @@ const Chart = React.createClass({
     const xScale = this._getXScale();
     const yScale = this._getYScale();
     const cScale = this._getCScale();
-    const SIZE = 3; // always radius 2
+    const SIZE = 2; // always radius 2
     const DEFAULT_COLOR = '#1f77b4'; // d3 cool blue
     // adjust scales for the fact that sigma renders from middle, not edge
     const xAdjustment = (xScale.range()[1] - xScale.range()[0]) / 2 + PADDING_SIZE * 1.5 - 5;
@@ -180,7 +180,8 @@ const Chart = React.createClass({
         y: isUpdate ? this.lastGraph.nodes[i].y2 : defaultY,
         x2: xFn(d),
         y2: yFn(d),
-        size: SIZE
+        size: SIZE,
+        color: (d.study === 'Chong et al' ? DEFAULT_COLOR : '#bada55')
       };
     });
     let g = {
@@ -321,7 +322,8 @@ const Chart = React.createClass({
         stroke: 'black',
         'stroke-width': 2
       });
-      bottoms.transition().duration(TRANSITION_DURATION * 2)
+      bottoms.transition()
+        .duration(TRANSITION_DURATION * 2)
         .attr({
           x1: midXFn,
           x2: midXFn,
@@ -347,7 +349,8 @@ const Chart = React.createClass({
   _getYScale () {
     const _domain = this._getRangeByKey(this.state.yKey);
     const _range = [this.state.domHeight - PADDING_SIZE - AXIS_HEIGHT, PADDING_SIZE];
-    return d3.scale.linear()
+    return d3.scale.log()
+      .base(Math.E)
       .domain(_domain)
       .range(_range);
   },
@@ -450,6 +453,10 @@ const styles = {
   svgContainer: {
     width: '90%',
     position: 'relative'
+  },
+  svg: {
+    position: 'relative',
+    zIndex: 1
   }
 };
 
