@@ -21213,7 +21213,10 @@
 	  _renderRNodes: function _renderRNodes() {
 	    var nodes = this.state.particles.map(function (d, i) {
 	      // adjust x and y
-	      return _react2.default.createElement('a-sphere', { key: 'r' + i, position: d.x + ' ' + d.y + ' -200', radius: '5', color: 'yellow' });
+	      var ADJUSTMENT_FACTOR = 10;
+	      var x = d.x / ADJUSTMENT_FACTOR;
+	      var y = d.y / ADJUSTMENT_FACTOR;
+	      return _react2.default.createElement('a-sphere', { key: 'r' + i, position: x + ' ' + y + ' -5', radius: '0.25', color: 'yellow' });
 	    });
 	    return _react2.default.createElement(
 	      'a-entity',
@@ -21288,42 +21291,55 @@
 	  componentDidMount: function componentDidMount() {
 	    var _this = this;
 
-	    var MAX = 0.5;
-	    var N_PARTICLES = 100;
+	    // don't animate particles for now
+	    // this._setupParticleAnimation();
+	    // animate DNA splitting
 	    var DELAY = 10;
-
 	    setInterval(function () {
 	      _this.props.dispatch({ type: 'INCREMENT_TRANSCRIPTION', value: 0.1 });
 	    }, DELAY);
+	  },
 
-	    // TEMP ***
-	    return;
-	    // ***
 
-	    var nodeInterval = 0;
-	    // d3 force fn a la https://github.com/mbostock/d3/wiki/Force-Layout
-	    // TEMP no links
+	  // d3 force fn a la https://github.com/mbostock/d3/wiki/Force-Layout
+	  // save animation state to state
+	  _setupParticleAnimation: function _setupParticleAnimation() {
+	    var _this2 = this;
+
+	    var MAX = 10;
+	    var N_PARTICLES = 10;
+	    var DELAY = 500;
 	    var force = _d2.default.layout.force().nodes([{}]) // single node
-	    // .links(links)
-	    .linkDistance(MAX / 20).gravity(0.1).charge(-60).size([MAX, MAX]);
-	    // create nodes
-
+	    .links([]).linkDistance(0.25).gravity(0.1).charge(-60).size([MAX, MAX]);
 	    var nodes = force.nodes();
-	    // let links = [];
-
+	    var links = force.links();
+	    var nodeInterval = 0;
 	    // add nodes
 	    function addNode() {
 	      if (nodes.length > N_PARTICLES) return;
 	      nodeInterval++;
 	      nodes.push({});
 	    };
-	    for (var i = N_PARTICLES; i >= 0; i--) {
+	    function addLink() {
+	      links.push({
+	        target: nodeInterval,
+	        source: nodeInterval - 1
+	      });
+	    };
+	    // on timer, add particles to nodes
+	    setInterval(function () {
+	      // only do n particles
+	      if (nodeInterval > N_PARTICLES || !_this2.isMounted()) return;
 	      addNode();
-	    }
+	      if (nodeInterval > 0) addLink();
+	      force.start();
+	    }, DELAY);
 
 	    // update state on tick
 	    force.on('tick', function (e) {
-	      _this.setState({ particles: nodes });
+	      nodes[0].x = 0;
+	      nodes[0].y = 0;
+	      _this2.setState({ particles: nodes });
 	    });
 	    force.start();
 	  }
