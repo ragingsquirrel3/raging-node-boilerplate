@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>The Central Dogma of Molecular Biology</title>
+        <title>a-frame DNA example | Travis Sheppard</title>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
@@ -16,77 +16,11 @@
                 font-size: 64px;
                 margin: 3rem 0 3rem 0;
             }
-            h3 {
-                font-family: 'Fjalla One', sans-serif;
-                color: black;
-                margin: 3rem 0 30rem 0;
-                text-align: center;
-            }
-            .container {
-                display: none;
-            }
-            .scroll-prompt-text {
-                margin-right: 1rem;
-            }
-            .scroll-target {
-                position: relative;
-                z-index: 1;
-                height: 100vh;
-                overflow: scroll;
-            }
-            .scroll-target-bg {
-                background: white;
-                position: absolute;
-                width: 100%;
-                height: 5000px;
-                opacity: 0.75;
-            }
-            .scroll-target-text h1, h3, p, ol {
-                position: relative;
-            }
-            .scroll-target-text {
-                padding: 1rem;
-            }
-            .scroll-target-text p {
-                margin: 0 0 12rem;
-            }
         </style>
     </head>
     <body>
-      <div class="container">
-        <div class="row">
-          <div class="col-md-6 scroll-target" id="j-scroll-target">
-                <div class="scroll-target-bg"></div>
-                <div class="scroll-target-text">
-            <h1>The Central Dogma of Molecular Biology</h1>
-            <p>Text is taken from <a href="https://en.wikipedia.org/wiki/Transcription_(genetics)">Wikipedia's excellent article on the subject</a>.</p>
-            <h3><span class="scroll-prompt-text">Scroll Down to Begin</span><span class="glyphicon glyphicon-chevron-down"></span></h3>
-            <p>
-          Transcription is the first step of gene expression, in which a particular segment of DNA is copied into RNA (mRNA) by the enzyme RNA polymerase.
-            </p>
-            <p>
-                Both RNA and DNA are nucleic acids, which use base pairs of nucleotides as a complementary language. The two can be converted back and forth from DNA to RNA by the action of the correct enzymes. During transcription, a DNA sequence is read by an RNA polymerase, which produces a complementary, antiparallel RNA strand called a primary transcript.
-    Transcription proceeds in the following general steps:
-            </p>
-            <ol>
-            <li>One or more sigma factor protein binds to the RNA polymerase holoenzyme, allowing it to bind to promoter DNA.</li>
-            <li>RNA polymerase creates a transcription bubble, which separates the two strands of the DNA helix. This is done by breaking the hydrogen bonds between complementary DNA nucleotides.
-            RNA polymerase adds matching RNA nucleotides to the complementary nucleotides of one DNA strand.</li>
-            <li>RNA sugar-phosphate backbone forms with assistance from RNA polymerase to form an RNA strand.</li>
-            <li>Hydrogen bonds of the untwisted RNA-DNA helix break, freeing the newly synthesized RNA strand.</li>
-            <li>If the cell has a nucleus, the RNA may be further processed. This may include polyadenylation, capping, and splicing.</li>
-            <li>The RNA may remain in the nucleus or exit to the cytoplasm through the nuclear pore complex.
-            </li>
-        </ol>
-        <p>
-            The stretch of DNA transcribed into an RNA molecule is called a transcription unit and encodes at least one gene. If the gene transcribed encodes a protein, messenger RNA (mRNA) will be transcribed; the mRNA will in turn serve as a template for the protein's synthesis through translation. Alternatively, the transcribed gene may encode for either non-coding RNA (such as microRNA), ribosomal RNA (rRNA), transfer RNA (tRNA), or other enzymatic RNA molecules called ribozymes.[1] Overall, RNA helps synthesize, regulate, and process proteins; it therefore plays a fundamental role in performing functions within a cell.
-        </p>
-                </div>
-            </div>
-          </div>
-        </div>
         <!-- a-frame target via react -->
-      	<div id="target"></div>
+        <div id="target"></div>
         <script src="https://aframe.io/releases/0.2.0/aframe.min.js" type="text/javascript" charset="utf-8"></script>
         <script src="js/bundle.js" type="text/javascript" charset="utf-8"></script>
     </body>
