@@ -37,6 +37,8 @@
     "eslint-config-rackt": "^1.1.0",
     "eslint-plugin-react": "^3.6.3",
     "express": "^4.13.3",
+    "grunt": "^1.0.1",
+    "grunt-aws": "^0.6.2",
     "gzip-size": "^3.0.0",
     "isparta-loader": "^1.0.0",
     "mocha": "^2.0.1",

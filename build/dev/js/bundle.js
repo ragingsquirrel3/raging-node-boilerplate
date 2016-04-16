@@ -21146,8 +21146,6 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactRedux = __webpack_require__(159);
-
 	var _d = __webpack_require__(182);
 
 	var _d2 = _interopRequireDefault(_d);
@@ -21159,7 +21157,7 @@
 	  getDefaultProps: function getDefaultProps() {
 	    return {
 	      // sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTA'
-	      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTATATGTATACGAATGGAAAAATTTATCCGAATCTC'
+	      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATAT'
 	    };
 	  },
 	  render: function render() {
@@ -21269,17 +21267,7 @@
 	  }
 	});
 
-	var mapStateToProps = function mapStateToProps(_state) {
-	  var state = _state.dnaSceneReducer;
-	  return {
-	    promoterPos: state.promoterPos,
-	    mRNAPos: state.mRNAPos
-	  };
-	};
-
-	var AnimatedDNA = (0, _reactRedux.connect)(mapStateToProps)(DNA);
-
-	exports.default = AnimatedDNA;
+	exports.default = DNA;
 
 	// bp colors
 

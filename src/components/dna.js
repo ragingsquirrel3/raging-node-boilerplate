@@ -1,13 +1,12 @@
 import _ from 'underscore';
 import React from 'react';
-import { connect } from 'react-redux';
 import d3 from 'd3';
 
 const DNA = React.createClass({
   getDefaultProps () {
     return {
       // sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTA'
-      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTATATGTATACGAATGGAAAAATTTATCCGAATCTC'
+      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATAT'
     }
   },
 
@@ -121,19 +120,7 @@ const DNA = React.createClass({
   },
 });
 
-const mapStateToProps = (_state) => {
-  let state = _state.dnaSceneReducer;
-  return {
-    promoterPos: state.promoterPos,
-    mRNAPos: state.mRNAPos
-  };
-};
-
-const AnimatedDNA = connect(
-  mapStateToProps
-)(DNA);
-
-export default AnimatedDNA;
+export default DNA;
 
 // bp colors
 const A_COLOR = '#00A51D';
