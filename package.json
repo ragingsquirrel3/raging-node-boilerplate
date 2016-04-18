@@ -4,7 +4,7 @@
   "description": "A boilerplate node.js project with tests",
   "scripts": {
     "build": "webpack && minify build/dev/js/bundle.js",
-    "start": "cp src/lib/index.html build/dev/index.html && webpack-dev-server --content-base build/dev/",
+    "start": "cp -r src/lib/static/ build/dev/ && webpack-dev-server --content-base build/dev/",
     "test": "mocha test --compilers js:babel-register"
   },
   "authors": [
@@ -16,8 +16,6 @@
     "invariant": "^2.0.0",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
-    "react-redux": "^4.4.1",
-    "redux": "^3.3.1",
     "underscore": "^1.8.3",
     "warning": "^2.0.0"
   },
