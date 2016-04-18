@@ -5,8 +5,7 @@ import d3 from 'd3';
 const DNA = React.createClass({
   getDefaultProps () {
     return {
-      // sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTA'
-      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTATATGTATACGAATG',
+      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATC',
       steps: [
         {
           imgSrc: 'img/lorem.png'
@@ -23,7 +22,8 @@ const DNA = React.createClass({
 
   getInitialState() {
     return {
-      currentStep: 0  
+      currentStep: 0,
+      rnaPolPos:`-0.1 8 0`
     };
   },
 
@@ -39,13 +39,36 @@ const DNA = React.createClass({
       <div onClick={this._incrementStep}>
         <a-scene>
           {this._renderBillboard()}
-          {this._renderSection()}
-          {this._renderSection(`0 -2 -5`, `0 37 110`)}
+          {this._renderSection(`-2 0 0`)}
+          {this._renderSection(`-0.25 0 -5`, `0 37 110`)}
           {this._renderRNAPol()}
           <a-sky color='#272822' />
         </a-scene>
       </div>
     );
+  },
+
+  componentDidUpdate(prevProps, prevState) {
+    // if 0 -> 1 animate rnaPolPos
+    const END_Y = 2;
+    const STEP_FACTOR_Y = 0.5;
+    if (this.state.currentStep === 1 && prevState.currentStep === 0) {
+      this.setState({ rnaPolPos: `-0.1 8 0` });
+      this.rTimer = setInterval( () => {
+        let currentPos = this.state.rnaPolPos;
+        let currentY = parseInt(currentPos.split(' ')[1]);
+        if (currentY <= END_Y) {
+          clearInterval(this.rTimer);
+          return;
+        }
+        currentY -= STEP_FACTOR_Y;
+        this.setState({ rnaPolPos: `-0.1 ${currentY} 0` });
+      }, 100);
+    }
+    // reset cleanup
+    if (this.state.currentStep === 0) {
+      if (this.rTimer) clearInterval(this.rTimer);
+    }
   },
 
   _renderSection (_position, _rotation) {
@@ -75,21 +98,22 @@ const DNA = React.createClass({
     );
   },
 
+  _renderRNAPol () {
+    if (this.state.currentStep < 1) return null;
+    return (
+      <a-entity position={this.state.rnaPolPos}>
+        <a-sphere radius={0.3} color='#E85379' />
+        <a-sphere position={`0 0.6 0`} radius={0.5} color={RNA_POL_COLOR} />
+      </a-entity>
+    );
+  },
+
   _renderBillboard () {
-    if (this.state.currentStep === 0) return null;
+    if (this.state.currentStep < 2) return null;
     let currentStepD = this.props.steps[this.state.currentStep - 1];
     let _src = currentStepD.imgSrc;
     let _position = currentStepD.position || DEFAULT_BILLBOARD_POSITION;
     return <a-image position={_position} width='6' height='4' id='billboard-img' src={_src} />;
-  },
-
-  _renderRNAPol () {
-    return (
-      <a-entity position={`0 0 0`}>
-        <a-sphere radius={0.3} color='#E85379' />
-        <a-sphere position={`0 -0.6 0`} radius={0.5} color={RNA_POL_COLOR} />
-      </a-entity>
-    );
   },
 
   _getPlusOuterPos () {

@@ -19689,8 +19689,7 @@
 	  displayName: 'DNA',
 	  getDefaultProps: function getDefaultProps() {
 	    return {
-	      // sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTA'
-	      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATGTATATGTATACGAATG',
+	      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATC',
 	      steps: [{
 	        imgSrc: 'img/lorem.png'
 	      }, {
@@ -19702,7 +19701,8 @@
 	  },
 	  getInitialState: function getInitialState() {
 	    return {
-	      currentStep: 0
+	      currentStep: 0,
+	      rnaPolPos: '-0.1 8 0'
 	    };
 	  },
 
@@ -19721,15 +19721,39 @@
 	        'a-scene',
 	        null,
 	        this._renderBillboard(),
-	        this._renderSection(),
-	        this._renderSection('0 -2 -5', '0 37 110'),
+	        this._renderSection('-2 0 0'),
+	        this._renderSection('-0.25 0 -5', '0 37 110'),
 	        this._renderRNAPol(),
 	        _react2.default.createElement('a-sky', { color: '#272822' })
 	      )
 	    );
 	  },
-	  _renderSection: function _renderSection(_position, _rotation) {
+	  componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
 	    var _this = this;
+
+	    // if 0 -> 1 animate rnaPolPos
+	    var END_Y = 2;
+	    var STEP_FACTOR_Y = 0.5;
+	    if (this.state.currentStep === 1 && prevState.currentStep === 0) {
+	      this.setState({ rnaPolPos: '-0.1 8 0' });
+	      this.rTimer = setInterval(function () {
+	        var currentPos = _this.state.rnaPolPos;
+	        var currentY = parseInt(currentPos.split(' ')[1]);
+	        if (currentY <= END_Y) {
+	          clearInterval(_this.rTimer);
+	          return;
+	        }
+	        currentY -= STEP_FACTOR_Y;
+	        _this.setState({ rnaPolPos: '-0.1 ' + currentY + ' 0' });
+	      }, 100);
+	    }
+	    // reset cleanup
+	    if (this.state.currentStep === 0) {
+	      if (this.rTimer) clearInterval(this.rTimer);
+	    }
+	  },
+	  _renderSection: function _renderSection(_position, _rotation) {
+	    var _this2 = this;
 
 	    // higlight a segment if on the right step
 	    var HIGHLIT_COORDS = [15, 20];
@@ -19739,7 +19763,7 @@
 	    var DEG_PER_WIGGLE = 2;
 	    var bpNodes = this.props.sequence.split('').map(function (d, i) {
 	      var bp = d.toLowerCase();
-	      var bpNode = _this._renderBasePair(d);
+	      var bpNode = _this2._renderBasePair(d);
 	      x += STEP_FACTOR_X;
 	      r += STEP_FACTOR_R;
 	      // rotate strand
@@ -19760,20 +19784,21 @@
 	      bpNodes
 	    );
 	  },
+	  _renderRNAPol: function _renderRNAPol() {
+	    if (this.state.currentStep < 1) return null;
+	    return _react2.default.createElement(
+	      'a-entity',
+	      { position: this.state.rnaPolPos },
+	      _react2.default.createElement('a-sphere', { radius: 0.3, color: '#E85379' }),
+	      _react2.default.createElement('a-sphere', { position: '0 0.6 0', radius: 0.5, color: RNA_POL_COLOR })
+	    );
+	  },
 	  _renderBillboard: function _renderBillboard() {
-	    if (this.state.currentStep === 0) return null;
+	    if (this.state.currentStep < 2) return null;
 	    var currentStepD = this.props.steps[this.state.currentStep - 1];
 	    var _src = currentStepD.imgSrc;
 	    var _position = currentStepD.position || DEFAULT_BILLBOARD_POSITION;
 	    return _react2.default.createElement('a-image', { position: _position, width: '6', height: '4', id: 'billboard-img', src: _src });
-	  },
-	  _renderRNAPol: function _renderRNAPol() {
-	    return _react2.default.createElement(
-	      'a-entity',
-	      { position: '0 0 0' },
-	      _react2.default.createElement('a-sphere', { radius: 0.3, color: '#E85379' }),
-	      _react2.default.createElement('a-sphere', { position: '0 -0.6 0', radius: 0.5, color: RNA_POL_COLOR })
-	    );
 	  },
 	  _getPlusOuterPos: function _getPlusOuterPos() {
 	    var p = SIZE / 2;
