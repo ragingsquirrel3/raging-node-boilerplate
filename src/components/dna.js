@@ -72,14 +72,10 @@ const DNA = React.createClass({
   },
 
   _renderSection (_position, _rotation) {
-    // higlight a segment if on the right step
-    const HIGHLIT_COORDS = [15, 20];
     let x = -(this.props.sequence.length / 2) * STEP_FACTOR_X;
     let y = 2;
     let r = 0;
-    const DEG_PER_WIGGLE = 2;
     const bpNodes = this.props.sequence.split('').map( (d, i) => {
-      let bp = d.toLowerCase();
       let bpNode = this._renderBasePair(d);
       x += STEP_FACTOR_X;
       r += STEP_FACTOR_R;
@@ -113,7 +109,7 @@ const DNA = React.createClass({
     let currentStepD = this.props.steps[this.state.currentStep - 1];
     let _src = currentStepD.imgSrc;
     let _position = currentStepD.position || DEFAULT_BILLBOARD_POSITION;
-    return <a-image position={_position} width='6' height='4' id='billboard-img' src={_src} />;
+    return <a-image position={_position} width='9' height='9' id='billboard-img' src={_src} />;
   },
 
   _getPlusOuterPos () {
@@ -138,7 +134,7 @@ const DNA = React.createClass({
 
   _renderBasePair (seqChar) {
     seqChar = seqChar.toLowerCase();
-    // select primary and complementary amino acid colors from character
+    // select primary and complementary nucleic acid colors from character
     let p, c;
     switch (seqChar) {
       case 'a':
@@ -179,7 +175,7 @@ const G_COLOR = '#77468C';
 const B_COLOR = '#3499FB';
 const RNA_POL_COLOR = '#E85379';
 
-const DEFAULT_BILLBOARD_POSITION = '0 3 -2';
+const DEFAULT_BILLBOARD_POSITION = '0 1 -2';
 const SIZE = 0.75;
 const STEP_FACTOR_X = SIZE / 3;
 const STEP_FACTOR_R = 22;
