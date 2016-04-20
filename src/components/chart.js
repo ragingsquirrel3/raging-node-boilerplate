@@ -18,7 +18,10 @@ const TRANSITION_DURATION = 1000;
 
 const Chart = React.createClass({
   propTypes: {
-    data: React.PropTypes.array
+    data: React.PropTypes.array,
+    defaultXKey: React.PropTypes.string,
+    defaultYKey: React.PropTypes.string,
+    defaultCKey: React.PropTypes.string
   },
 
   getDefaultProps () {
@@ -29,10 +32,13 @@ const Chart = React.createClass({
 
   getInitialState () {
     const numericalKeys = this._getNumericalKeys();
+    let _xKey = this.props.defaultXKey || numericalKeys[0];
+    let _yKey = this.props.defaultYKey || numericalKeys[numericalKeys.length - 1];
+    let _cKey = this.props.defaultCKey || numericalKeys[numericalKeys.length - 1];
     return {
-      xKey: numericalKeys[0],
-      yKey: numericalKeys[numericalKeys.length - 1],
-      cKey: numericalKeys[numericalKeys.length - 1],
+      xKey: _xKey,
+      yKey: _yKey,
+      cKey: _cKey,
       domWidth: DEFAULT_DOME_SIZE,
       domHeight: DEFAULT_DOME_SIZE,
       mode: 'scatter' // 'scatter' or 'box'
@@ -113,6 +119,7 @@ const Chart = React.createClass({
 
   // d3-fu
   _drawSVG () {
+    // if (!this.state.domWidth) return;
     const xScale = this._getXScale();
     const yScale = this._getYScale();
     const cScale = this._getCScale();
@@ -155,6 +162,7 @@ const Chart = React.createClass({
   },
 
   _renderSigma () {
+    if (this.state.domWidth === DEFAULT_DOME_SIZE) return;
     const xScale = this._getXScale();
     const yScale = this._getYScale();
     const cScale = this._getCScale();
@@ -181,7 +189,8 @@ const Chart = React.createClass({
         x2: xFn(d),
         y2: yFn(d),
         size: SIZE,
-        color: (d.study === 'Chong et al' ? DEFAULT_COLOR : '#bada55')
+        color: (d.study === 'Chong et al' ? DEFAULT_COLOR : '#bada55'),
+        label: d.label
       };
     });
     let g = {
@@ -201,10 +210,13 @@ const Chart = React.createClass({
       container: 'sigma-target',
       settings: {
         defaultNodeColor: DEFAULT_COLOR,
+        drawEdges: false,
         minNodeSize: 1,
         maxNodeSize: 10,
         autoRescale: false,
-        animationsTime: TRANSITION_DURATION
+        animationsTime: TRANSITION_DURATION,
+        zoomMin: 1,
+        zoomMax: 1
       }
     });
     // save that graph to instance var
@@ -215,7 +227,6 @@ const Chart = React.createClass({
       { x: 'x2', y: 'y2', size: 'size' },
       {
         duration: TRANSITION_DURATION,
-        // onComplete: function () { console.log('done') }
       }
     );
   },
@@ -334,8 +345,7 @@ const Chart = React.createClass({
 
   _calculateDomSize () {
     let rect = this.refs.svgContainer.getBoundingClientRect();
-    // only update if width, webpack dev bug
-    if (rect.width > 0) this.setState({ domWidth: rect.width });
+    this.setState({ domWidth: rect.width });
   },
 
   _getXScale () {
@@ -456,7 +466,7 @@ const styles = {
   },
   svg: {
     position: 'relative',
-    zIndex: 1
+    zIndex: -1
   }
 };
 
