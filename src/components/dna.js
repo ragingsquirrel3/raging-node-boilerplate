@@ -1,6 +1,5 @@
 import _ from 'underscore';
 import React from 'react';
-import d3 from 'd3';
 
 const DNA = React.createClass({
   getDefaultProps () {
@@ -23,7 +22,8 @@ const DNA = React.createClass({
   getInitialState() {
     return {
       currentStep: 0,
-      rnaPolPos:`-0.1 8 0`
+      rnaPolPos: `-0.1 8 0`,
+      rnaPolCoord: 14
     };
   },
 
@@ -35,6 +35,8 @@ const DNA = React.createClass({
   },
 
   render () {
+    console.log(this.state.currentStep)
+    // console.log('posL ', this.state.rnaPolPos, ' coord: ', this.state.rnaPolCoord)
     return (
       <div onClick={this._incrementStep}>
         <a-scene>
@@ -50,25 +52,38 @@ const DNA = React.createClass({
 
   componentDidUpdate(prevProps, prevState) {
     // if 0 -> 1 animate rnaPolPos
-    const END_Y = 2;
-    const STEP_FACTOR_Y = 0.5;
     if (this.state.currentStep === 1 && prevState.currentStep === 0) {
-      this.setState({ rnaPolPos: `-0.1 8 0` });
-      this.rTimer = setInterval( () => {
-        let currentPos = this.state.rnaPolPos;
-        let currentY = parseInt(currentPos.split(' ')[1]);
-        if (currentY <= END_Y) {
-          clearInterval(this.rTimer);
-          return;
-        }
-        currentY -= STEP_FACTOR_Y;
-        this.setState({ rnaPolPos: `-0.1 ${currentY} 0` });
-      }, 100);
+      let currentPos = this.state.rnaPolPos;
+      let currentY = parseInt(currentPos.split(' ')[1]);
+      const END_Y = 1.75;
+      this._interpolateNumber(currentY, END_Y, 1000, val => {
+        this.setState({ rnaPolPos: `-0.1 ${val} 0` });
+      });
     }
+    // if 1 -> 2 animate rnaPolCoord to go along DNA
     // reset cleanup
-    if (this.state.currentStep === 0) {
-      if (this.rTimer) clearInterval(this.rTimer);
+    if (this.state.currentStep === 0 && prevState.currentStep > 0) {
+      this.setState({ rnaPolPos: `-0.1 8 0` });
+      if (this.interTimer) clearInterval(this.interTimer);
     }
+  },
+
+  // cb(val)
+  _interpolateNumber(start, end, duration, cb) {
+    const STEPS = 20;
+    if (this.interTimer) clearInterval(this.interTimer);
+    let current = start;
+    let stepValue = (end - start) / STEPS;
+    let isUp = (end > start);
+    this.interTimer = setInterval( () => {
+      current += stepValue;
+      cb(current);
+      let isFinished = ((isUp && current >= end) || (!isUp && current <= end));
+      if (isFinished) {
+        cb(end);
+        clearInterval(this.interTimer);
+      }
+    }, duration / STEPS);
   },
 
   _renderSection (_position, _rotation) {
@@ -98,13 +113,14 @@ const DNA = React.createClass({
     if (this.state.currentStep < 1) return null;
     return (
       <a-entity position={this.state.rnaPolPos}>
-        <a-sphere radius={0.3} color='#E85379' />
-        <a-sphere position={`0 0.6 0`} radius={0.5} color={RNA_POL_COLOR} />
+        <a-sphere radius={0.5} color={RNA_POL_COLOR} />
       </a-entity>
     );
   },
 
   _renderBillboard () {
+    // TEMP nothin
+    return null;
     if (this.state.currentStep < 2) return null;
     let currentStepD = this.props.steps[this.state.currentStep - 1];
     let _src = currentStepD.imgSrc;
