@@ -15,6 +15,9 @@ const DNA = React.createClass({
         },
         {
           imgSrc: 'img/lorem.png'
+        },
+        {
+          imgSrc: 'img/lorem.png'
         }
       ]
     }
@@ -25,7 +28,8 @@ const DNA = React.createClass({
       currentStep: 0,
       rnaPolY: 8,
       rnaPolCoord: RNA_POL_START_COORD,
-      isSplit: true
+      isSplit: true,
+      sceneY: START_SCENE_Y
     };
   },
 
@@ -40,10 +44,12 @@ const DNA = React.createClass({
     return (
       <div onClick={this._incrementStep}>
         <a-scene>
-          {this._renderBillboard()}
-          {this._renderSection(`0 0 0`)}
-          {this._renderRNAPol()}
           <a-sky color='#272822' />
+          {this._renderBillboard()}
+          <a-entity position={`0 ${this.state.sceneY} 0`}>
+            {this._renderSection(`0 0 0`)}
+            {this._renderRNAPol()}
+          </a-entity>
         </a-scene>
       </div>
     );
@@ -60,15 +66,22 @@ const DNA = React.createClass({
     // if 1 -> 2 animate rnaPolCoord to go along DNA
     if (this.state.currentStep === 2 && prevState.currentStep === 1) {
       this.setState({ isSplit: true });
-      this._interpolateNumber(RNA_POL_START_COORD, RNA_POL_END_COORD, 10000, val => {
+      this._interpolateNumber(RNA_POL_START_COORD, RNA_POL_END_COORD, 3000, val => {
         this.setState({ rnaPolCoord: val });
+      });
+    }
+    // if 2 -> 3 animate whole thing up
+    if (this.state.currentStep === 3 && prevState.currentStep === 2) {
+      this._interpolateNumber(START_SCENE_Y, END_SCENE_Y, 2000, val => {
+        this.setState({ sceneY: val });
       });
     }
     // reset cleanup
     if (this.state.currentStep === 0 && prevState.currentStep > 0) {
       this.setState({
         rnaPolY: 8,
-        rnaPolCoord: RNA_POL_START_COORD
+        rnaPolCoord: RNA_POL_START_COORD,
+        sceneY: START_SCENE_Y
       });
     }
   },
@@ -93,7 +106,7 @@ const DNA = React.createClass({
 
   _renderSection (_position, _rotation) {
     let y = 2;
-    const bpNodes = this.props.sequence.split('').map( (d, i) => {
+    let bpNodes = this.props.sequence.split('').map( (d, i) => {
       let bpNode = this._renderBasePair(d, i);
       let x = this._xScale(i);
       let r = this._rScale(i);
@@ -117,12 +130,24 @@ const DNA = React.createClass({
     return (
       <a-entity position={_position} rotation={`${r} 0 0`}>
         <a-sphere position={`0 ${-SIZE * 0.9} 0`} radius={SIZE / 3} color={RNA_POL_COLOR} />
+        {this._renderMRNA()}
       </a-entity>
     );
   },
 
   _renderMRNA () {
-
+    let tSeqLength = Math.round(this.state.rnaPolCoord - RNA_POL_START_COORD);
+    let tSeq = this.props.sequence
+      .split('')
+      .splice(RNA_POL_START_COORD, tSeqLength)
+      .join('');
+    let translateFactor = 6.5 - tSeq.length / 4.08;
+    let nodes = tSeq.split('').map( (d, i) => {
+      let bpNode = this._renderBasePair(d, i, true);
+      let x = this._xScale(i) + translateFactor;
+      return <a-entity key={`bp${i}`} position={`${x} -0.25 0`}>{bpNode}</a-entity>;
+    });
+    return <a-entity position={`0 -1 0`} rotation={`0 0 90`}>{nodes}</a-entity>;
   },
 
   _renderBillboard () {
@@ -165,7 +190,7 @@ const DNA = React.createClass({
     return `0 ${p} 0`;
   },
 
-  _renderBasePair (seqChar, coord) {
+  _renderBasePair (seqChar, coord, isRNA) {
     seqChar = seqChar.toLowerCase();
     // select primary and complementary nucleic acid colors from character
     let p, c;
@@ -186,6 +211,14 @@ const DNA = React.createClass({
         p = G_COLOR;
         c = C_COLOR;
         break;
+    }
+    if (isRNA) {
+      return (
+        <a-entity>
+          <a-cylinder position={this._getMinusInnerPos(coord)} radius={SIZE / 20} height={SIZE / 2} open-ended="false" color={c} />
+          <a-sphere position={this._getMinusOuterPos(coord)} radius={SIZE / 10} color={B_COLOR} />
+        </a-entity>
+      );
     }
     return (
       <a-entity>
@@ -220,7 +253,9 @@ const B_COLOR = '#3499FB';
 const RNA_POL_COLOR = '#E85379';
 
 const DEFAULT_BILLBOARD_POSITION = '0 1 -2';
-const RNA_POL_START_COORD = 0;
+const RNA_POL_START_COORD = 25;
 const RNA_POL_END_COORD = 33;
 const SIZE = 0.75;
 const STEP_FACTOR_R = 22;
+const START_SCENE_Y = 0;
+const END_SCENE_Y = 20;
