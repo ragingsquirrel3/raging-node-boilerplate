@@ -141,6 +141,8 @@ const DNA = React.createClass({
       .split('')
       .splice(RNA_POL_START_COORD, tSeqLength)
       .join('');
+    // make long if showing ribosome step
+    if (this.state.currentStep >= 3) tSeq = this.props.sequence;
     let translateFactor = 6.5 - tSeq.length / 4.08;
     let nodes = tSeq.split('').map( (d, i) => {
       let bpNode = this._renderBasePair(d, i, true);
@@ -258,4 +260,4 @@ const RNA_POL_END_COORD = 33;
 const SIZE = 0.75;
 const STEP_FACTOR_R = 22;
 const START_SCENE_Y = 0;
-const END_SCENE_Y = 20;
+const END_SCENE_Y = 10;
