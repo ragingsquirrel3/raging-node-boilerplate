@@ -21,6 +21,8 @@ const Chart = React.createClass({
     data: React.PropTypes.array,
     defaultXKey: React.PropTypes.string,
     defaultYKey: React.PropTypes.string,
+    defaultXScaleFn: React.PropTypes.string,
+    defaultYScaleFn: React.PropTypes.string,
     defaultCKey: React.PropTypes.string
   },
 
@@ -39,8 +41,8 @@ const Chart = React.createClass({
       xKey: _xKey,
       yKey: _yKey,
       cKey: _cKey,
-      xScaleFn: 'linear',
-      yScaleFn: 'linear',
+      xScaleFn: this.props.defaultXScaleFn || 'linear',
+      yScaleFn: this.props.defaultYScaleFn || 'linear',
       domWidth: DEFAULT_DOME_SIZE,
       domHeight: DEFAULT_DOME_SIZE,
       mode: 'scatter' // 'scatter' or 'box'

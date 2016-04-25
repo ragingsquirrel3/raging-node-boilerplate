@@ -38,7 +38,9 @@
     "mocha": "^2.0.1",
     "webpack": "^1.4.13",
     "webpack-dev-middleware": "^1.2.0",
-    "webpack-dev-server": "^1.14.1"
+    "webpack-dev-server": "^1.14.1",
+    "grunt": "^1.0.1",
+    "grunt-aws": "^0.6.2"
   },
   "keywords": [
     "react",

@@ -10,7 +10,7 @@ d3.json('protein.json', function (err, _data) {
     return d;
   });
   ReactDOM.render(
-    <Chart data={_data} defaultXKey='rank by avg' defaultYKey='Molecules/cell'/>,
+    <Chart data={_data} defaultXKey='rank by avg' defaultYKey='Molecules/cell' defaultYScaleFn='ln' />,
     document.getElementById('target')
   );
 });
