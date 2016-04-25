@@ -5,14 +5,14 @@ import Select from 'react-select';
 // *** depends on global sigma from CDN in src/lib/index.html
 // import sigma from GLOBAL
 
-const AXIS_WIDTH = 30;
-const AXIS_HEIGHT = 30;
+const AXIS_WIDTH = 50;
+const AXIS_HEIGHT = 20;
 const BOX_CLASS = 'fc-box';
 const DEFAULT_DOME_SIZE = 485;
 const EXAMPLE_N = 8250;
 const NODE_CLASS = 'fc-node';
 const NUM_BINS = 10;
-const PADDING_SIZE = 40;
+const PADDING_SIZE = 30;
 const DEFAULT_NODE_RADIUS = 2;
 const TRANSITION_DURATION = 1000;
 
@@ -39,6 +39,8 @@ const Chart = React.createClass({
       xKey: _xKey,
       yKey: _yKey,
       cKey: _cKey,
+      xScaleFn: 'linear',
+      yScaleFn: 'linear',
       domWidth: DEFAULT_DOME_SIZE,
       domHeight: DEFAULT_DOME_SIZE,
       mode: 'scatter' // 'scatter' or 'box'
@@ -78,6 +80,8 @@ const Chart = React.createClass({
   },
 
   _renderMenu () {
+    // TEMP nothing
+    return null;
     const setMode = (newMode) => {
       this.setState({ mode: newMode });
     };
@@ -110,9 +114,21 @@ const Chart = React.createClass({
       obj[key] = newValue;
       this.setState(obj);
     };
+    let objFnKey = (key === 'xKey') ? 'xScaleFn' : 'yScaleFn';
+    let onChangeFn = newValue => {
+      let obj = {};
+      obj[objFnKey] = newValue;
+      this.setState(obj);
+    };
+    let scaleFnOptions = [
+      { value: 'linear', label: 'Linear'},
+      { value: 'sqrt', label: 'Square Root'},
+      { value: 'ln', label: 'Logarithmic'}
+    ];
     return (
       <div>
         <Select options={_options} value={this.state[key]} onChange={_onChange} clearable={false}/>
+        <Select options={scaleFnOptions} value={this.state[objFnKey]} onChange={onChangeFn} clearable={false}/>
       </div>
     );
   },
@@ -145,7 +161,7 @@ const Chart = React.createClass({
       .orient('left')
       .tickSize(3, 3)
       .scale(yScale);
-    const yTranslate = `translate(${PADDING_SIZE}, ${0})`;
+    const yTranslate = `translate(${AXIS_WIDTH}, ${0})`;
     let yAxis = svg.selectAll('g.y-axis').data([null]);
     yAxis.enter().append('g')
       .classed('y-axis', true)
@@ -350,8 +366,8 @@ const Chart = React.createClass({
 
   _getXScale () {
     const _domain = this._getRangeByKey(this.state.xKey);
-    const _range = [PADDING_SIZE, this.state.domWidth -  PADDING_SIZE - AXIS_WIDTH];
-    return d3.scale.linear()
+    const _range = [AXIS_WIDTH, this.state.domWidth - AXIS_WIDTH];
+    return this._getScaleFn(this.state.xScaleFn)
       .domain(_domain)
       .range(_range);
   },
@@ -359,10 +375,23 @@ const Chart = React.createClass({
   _getYScale () {
     const _domain = this._getRangeByKey(this.state.yKey);
     const _range = [this.state.domHeight - PADDING_SIZE - AXIS_HEIGHT, PADDING_SIZE];
-    return d3.scale.log()
-      .base(Math.E)
+    return this._getScaleFn(this.state.yScaleFn)
       .domain(_domain)
       .range(_range);
+  },
+
+  _getScaleFn (scaleFnKey) {
+    switch (scaleFnKey) {
+      case 'linear':
+        return d3.scale.linear();
+        break;
+      case 'ln':
+        return d3.scale.log().base(Math.E);
+        break;
+      case 'sqrt':
+        return d3.scale.sqrt();
+        break;
+    }
   },
 
   _getCScale () {
