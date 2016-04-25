@@ -1,6 +1,6 @@
 *.DS_Store
 *.log
 node_modules
-build/dev
+build/dev/
 build/prod/assets
 credentials.json
