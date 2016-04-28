@@ -9,40 +9,25 @@ const DNA = React.createClass({
       steps: [
         {
           imgSrc: 'img/lorem.png'
-        },// start
+        },
         {
           imgSrc: 'img/lorem.png'
-        }, // attache RNA pol
+        },
         {
           imgSrc: 'img/lorem.png'
-        }, // transcribe
+        },
         {
           imgSrc: 'img/lorem.png'
-        }, // 
+        },
         {
           imgSrc: 'img/lorem.png'
-        }, // go out of nucleus
-        {
-          imgSrc: 'img/lorem.png'
-        }, // attach ribosome
-        {
-          imgSrc: 'img/lorem.png'
-        } // translate
+        },
       ]
     }
   },
 
   getInitialState() {
-    return {
-      currentStep: 0,
-      rnaPolY: 8,
-      rnaPolCoord: RNA_POL_START_COORD,
-      isSplit: true,
-      sceneY: START_SCENE_Y,
-      riboX: FAR_LEFT,
-      riboY: RIBO_START_Y,
-      isMoving: false
-    };
+    return INITIAL_STATE_OBJ;
   },
 
   // decrease until end then reloop
@@ -99,18 +84,14 @@ const DNA = React.createClass({
     }
     // if 4 -> 5 translate
     if (this.state.currentStep === 5 && prevState.currentStep === 4) {
-      let endY = RIBO_START_Y - 1;
+      let endY = RIBO_END_Y;
       this._interpolateNumber(RIBO_START_Y, endY, 1000, val => {
         this.setState({ riboY: val });
       });
     }
     // reset cleanup
     if (this.state.currentStep === 0 && prevState.currentStep > 0) {
-      this.setState({
-        rnaPolY: 8,
-        rnaPolCoord: RNA_POL_START_COORD,
-        sceneY: START_SCENE_Y
-      });
+      this.setState(INITIAL_STATE_OBJ);
     }
   },
 
@@ -192,9 +173,35 @@ const DNA = React.createClass({
     return <a-image position={_position} width='9' height='9' id='billboard-img' src={_src} />;
   },
 
+  // ribosome and polypeptide chain
   _renderRibosome () {
     let _position = `${this.state.riboX} ${this.state.riboY} 0`;
-    return <a-sphere position={_position} radius={SIZE / 2} color={RIBOSOME_COLOR} />;
+    // make a peptide change with length corresponding to progress
+    // 0 - 1 of translation progress
+    let totalDelta = Math.abs(RIBO_START_Y - RIBO_END_Y);
+    let currentDelta = Math.abs(this.state.riboY - RIBO_END_Y);
+    let progress = 1 -currentDelta / totalDelta;
+    let pepLength = Math.round(progress * END_PEP_LENGTH);
+    let pepNodes = [];
+    let x = 0;
+    for (var i = pepLength; i > 0; i--) {
+      x += PEP_STEP_FACTOR;
+      pepNodes.push(this._renderAminoAcid(x));
+    }
+    return (
+      <a-entity position={_position}>
+        <a-sphere radius={SIZE / 2} color={RIBOSOME_COLOR} />
+        {pepNodes}
+      </a-entity>
+    );
+  },
+
+  _renderAminoAcid (relX) {
+    return (
+      <a-entity key={`pep${relX}`} position={`${relX} 0 0`}>
+        <a-sphere radius={SIZE / 5} color={PEP_COLOR} />
+      </a-entity>
+    );
   },
 
   _getSeparation (coord) {
@@ -281,7 +288,7 @@ const DNA = React.createClass({
 
 export default DNA;
 
-//  colors
+// colors
 const A_COLOR = '#00A51D';
 const T_COLOR = '#F25270';
 const C_COLOR = '#F2E422';
@@ -289,6 +296,7 @@ const G_COLOR = '#77468C';
 const B_COLOR = '#3499FB';
 const RNA_POL_COLOR = '#E85379';
 const RIBOSOME_COLOR = '#3499FB';
+const PEP_COLOR = G_COLOR; // TEMP, should be dynamic
 
 const DEFAULT_BILLBOARD_POSITION = '0 1 -2';
 const RNA_POL_START_COORD = 25;
@@ -297,5 +305,18 @@ const SIZE = 0.75;
 const STEP_FACTOR_R = 22;
 const START_SCENE_Y = 0;
 const END_SCENE_Y = 10;
-const RIBO_START_Y = -(END_SCENE_Y - 2);
+const RIBO_START_Y = -(END_SCENE_Y - 3.5);
+const RIBO_END_Y = RIBO_START_Y - 3;
 const FAR_LEFT = -20;
+const END_PEP_LENGTH = 12;
+const PEP_STEP_FACTOR = 0.25;
+const INITIAL_STATE_OBJ = {
+  currentStep: 0,
+  rnaPolY: 8,
+  rnaPolCoord: RNA_POL_START_COORD,
+  isSplit: true,
+  sceneY: START_SCENE_Y,
+  riboX: FAR_LEFT,
+  riboY: RIBO_START_Y,
+  isMoving: false
+};
