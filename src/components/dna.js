@@ -22,6 +22,9 @@ const DNA = React.createClass({
         {
           imgSrc: 'img/lorem.png'
         },
+        {
+          imgSrc: 'img/lorem.png'
+        }
       ]
     }
   },
@@ -62,28 +65,34 @@ const DNA = React.createClass({
         this.setState({ rnaPolY: val});
       });
     }
-    // if 1 -> 2 animate rnaPolCoord to go along DNA
+     // if 1 -> 2 separate
     if (this.state.currentStep === 2 && prevState.currentStep === 1) {
+      this._interpolateNumber(0, FINAL_SEPARATION_FACTOR, 1000, val => {
+        this.setState({ separation: val });
+      });
+    }
+    // if 2 -> 3 animate rnaPolCoord to go along DNA
+    if (this.state.currentStep === 3 && prevState.currentStep === 2) {
       this.setState({ isSplit: true });
       this._interpolateNumber(RNA_POL_START_COORD, RNA_POL_END_COORD, 3000, val => {
         this.setState({ rnaPolCoord: val });
       });
     }
-    // if 2 -> 3 animate whole thing up
-    if (this.state.currentStep === 3 && prevState.currentStep === 2) {
+    // if 3 -> 4 animate whole thing up
+    if (this.state.currentStep === 4 && prevState.currentStep === 3) {
       this._interpolateNumber(START_SCENE_Y, END_SCENE_Y, 2000, val => {
         this.setState({ sceneY: val });
       });
     }
-    // if 3 -> 4 attach ribo
-    if (this.state.currentStep === 4 && prevState.currentStep === 3) {
+    // if 4 -> 5 attach ribo
+    if (this.state.currentStep === 5 && prevState.currentStep === 4) {
       let endX = this._xScale(this.state.rnaPolCoord) - 0.4;
       this._interpolateNumber(FAR_LEFT, endX, 1000, val => {
         this.setState({ riboX: val });
       });
     }
-    // if 4 -> 5 translate
-    if (this.state.currentStep === 5 && prevState.currentStep === 4) {
+    // if 5 -> 6 translate
+    if (this.state.currentStep === 6 && prevState.currentStep === 5) {
       let endY = RIBO_END_Y;
       this._interpolateNumber(RIBO_START_Y, endY, 1000, val => {
         this.setState({ riboY: val });
@@ -153,7 +162,7 @@ const DNA = React.createClass({
       .splice(RNA_POL_START_COORD, tSeqLength)
       .join('');
     // make long if showing ribosome step
-    if (this.state.currentStep >= 3) tSeq = this.props.sequence;
+    if (this.state.currentStep >= 4) tSeq = this.props.sequence;
     let translateFactor = 6.5 - tSeq.length / 4.08;
     let nodes = tSeq.split('').map( (d, i) => {
       let bpNode = this._renderBasePair(d, i, true);
@@ -206,7 +215,7 @@ const DNA = React.createClass({
 
   _getSeparation (coord) {
     const defaultVal = 0;
-    const max = 0.25;
+    const max = this.state.separation;
     const thresh = 3;
     if (!this.state.isSplit) return defaultVal;
     let distance = Math.abs(coord - this.state.rnaPolCoord);
@@ -310,6 +319,7 @@ const RIBO_END_Y = RIBO_START_Y - 3;
 const FAR_LEFT = -20;
 const END_PEP_LENGTH = 12;
 const PEP_STEP_FACTOR = 0.25;
+const FINAL_SEPARATION_FACTOR = 0.25;
 const INITIAL_STATE_OBJ = {
   currentStep: 0,
   rnaPolY: 8,
@@ -318,5 +328,6 @@ const INITIAL_STATE_OBJ = {
   sceneY: START_SCENE_Y,
   riboX: FAR_LEFT,
   riboY: RIBO_START_Y,
-  isMoving: false
+  isMoving: false,
+  separation: 0
 };
