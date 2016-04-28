@@ -42,10 +42,11 @@ const DNA = React.createClass({
   },
 
   render () {
+    let bgColor = this._isInNucles() ? NUCLEUS_BG_COLOR : CYTO_BG_COLOR;
     return (
       <div onClick={this._incrementStep}>
         <a-scene>
-          <a-sky color='#272822' />
+          <a-sky color={bgColor} />
           {this._renderBillboard()}
           <a-entity position={`0 ${this.state.sceneY} 0`}>
             {this._renderSection(`0 0 0`)}
@@ -125,6 +126,8 @@ const DNA = React.createClass({
   },
 
   _renderSection (_position, _rotation) {
+    // don't render after leaving nucleus
+    if (!this._isInNucles) return null;
     let y = 2;
     let bpNodes = this.props.sequence.split('').map( (d, i) => {
       let bpNode = this._renderBasePair(d, i);
@@ -283,6 +286,10 @@ const DNA = React.createClass({
     );
   },
 
+  _isInNucles () {
+    return this.state.sceneY < BORDER_Y;
+  },
+
   _xScale (coord) {
     const scale = d3.scale.linear()
       .domain([0, 50])
@@ -306,6 +313,8 @@ const B_COLOR = '#3499FB';
 const RNA_POL_COLOR = '#E85379';
 const RIBOSOME_COLOR = '#3499FB';
 const PEP_COLOR = G_COLOR; // TEMP, should be dynamic
+const NUCLEUS_BG_COLOR = '#272822';
+const CYTO_BG_COLOR = '#FFF';
 
 const DEFAULT_BILLBOARD_POSITION = '0 1 -2';
 const RNA_POL_START_COORD = 25;
@@ -314,6 +323,7 @@ const SIZE = 0.75;
 const STEP_FACTOR_R = 22;
 const START_SCENE_Y = 0;
 const END_SCENE_Y = 10;
+const BORDER_Y = Math.abs(START_SCENE_Y - END_SCENE_Y) / 2;
 const RIBO_START_Y = -(END_SCENE_Y - 3.5);
 const RIBO_END_Y = RIBO_START_Y - 3;
 const FAR_LEFT = -20;
