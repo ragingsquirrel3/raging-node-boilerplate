@@ -127,7 +127,7 @@ const DNA = React.createClass({
 
   _renderSection (_position, _rotation) {
     // don't render after leaving nucleus
-    if (!this._isInNucles) return null;
+    if (!this._isInNucles()) return null;
     let y = 2;
     let bpNodes = this.props.sequence.split('').map( (d, i) => {
       let bpNode = this._renderBasePair(d, i);
@@ -219,7 +219,7 @@ const DNA = React.createClass({
   _getSeparation (coord) {
     const defaultVal = 0;
     const max = this.state.separation;
-    const thresh = 3;
+    const thresh = 2;
     if (!this.state.isSplit) return defaultVal;
     let distance = Math.abs(coord - this.state.rnaPolCoord);
     if (distance > thresh) return defaultVal;
