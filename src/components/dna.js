@@ -5,25 +5,31 @@ import d3 from 'd3';
 const DNA = React.createClass({
   getDefaultProps () {
     return {
-      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATC',
+      sequence: 'ATGGTTACGTATCCTGTGCAGCCTTGGACAAATTTTATAATTGTATATATCTATAATTGTATATATC',
       steps: [
         {
-          imgSrc: 'img/lorem.png'
+          imgSrc: 'assets/img/stage0.png'
         },
         {
-          imgSrc: 'img/lorem.png'
+          imgSrc: 'assets/img/stage1.png'
         },
         {
-          imgSrc: 'img/lorem.png'
+          imgSrc: 'assets/img/stage2.png'
         },
         {
-          imgSrc: 'img/lorem.png'
+          imgSrc: 'assets/img/stage3.png'
         },
         {
-          imgSrc: 'img/lorem.png'
+          imgSrc: 'assets/img/stage4.png'
         },
         {
-          imgSrc: 'img/lorem.png'
+          imgSrc: 'assets/img/stage5.png'
+        },
+        {
+          imgSrc: 'assets/img/stage6.png'
+        },
+        {
+          imgSrc: 'assets/img/stage7.png'
         }
       ]
     }
@@ -46,9 +52,9 @@ const DNA = React.createClass({
     return (
       <div onClick={this._incrementStep}>
         <a-scene>
-          <a-sky color={bgColor} />
+          <a-sky color={bgColor}/>
           {this._renderBillboard()}
-          <a-entity position={`0 ${this.state.sceneY} 0`}>
+          <a-entity position={`0 ${this.state.sceneY} 0`} rotation={`15 72 11`}>
             {this._renderSection(`0 0 0`)}
             {this._renderRNAPol()}
             {this._renderRibosome()}
@@ -59,48 +65,51 @@ const DNA = React.createClass({
   },
 
   componentDidUpdate(prevProps, prevState) {
+    // adjust steps
+    let prevStep = prevState.currentStep;
+    let currentStep = this.state.currentStep;
     // if 0 -> 1 animate rnaPolY
-    if (this.state.currentStep === 1 && prevState.currentStep === 0) {
+    if (currentStep === 1 && prevStep === 0) {
       const END_Y = 1.85;
       this._interpolateNumber(this.state.rnaPolY, END_Y, 1000, val => {
         this.setState({ rnaPolY: val});
       });
     }
      // if 1 -> 2 separate
-    if (this.state.currentStep === 2 && prevState.currentStep === 1) {
+    if (currentStep === 2 && prevStep === 1) {
       this._interpolateNumber(0, FINAL_SEPARATION_FACTOR, 1000, val => {
         this.setState({ separation: val });
       });
     }
     // if 2 -> 3 animate rnaPolCoord to go along DNA
-    if (this.state.currentStep === 3 && prevState.currentStep === 2) {
+    if (currentStep === 3 && prevStep === 2) {
       this.setState({ isSplit: true });
       this._interpolateNumber(RNA_POL_START_COORD, RNA_POL_END_COORD, 3000, val => {
         this.setState({ rnaPolCoord: val });
       });
     }
     // if 3 -> 4 animate whole thing up
-    if (this.state.currentStep === 4 && prevState.currentStep === 3) {
+    if (currentStep === 4 && prevStep === 3) {
       this._interpolateNumber(START_SCENE_Y, END_SCENE_Y, 2000, val => {
         this.setState({ sceneY: val });
       });
     }
     // if 4 -> 5 attach ribo
-    if (this.state.currentStep === 5 && prevState.currentStep === 4) {
+    if (currentStep === 5 && prevStep === 4) {
       let endX = this._xScale(this.state.rnaPolCoord) - 0.4;
       this._interpolateNumber(FAR_LEFT, endX, 1000, val => {
         this.setState({ riboX: val });
       });
     }
     // if 5 -> 6 translate
-    if (this.state.currentStep === 6 && prevState.currentStep === 5) {
+    if (currentStep === 6 && prevStep === 5) {
       let endY = RIBO_END_Y;
       this._interpolateNumber(RIBO_START_Y, endY, 1000, val => {
         this.setState({ riboY: val });
       });
     }
     // reset cleanup
-    if (this.state.currentStep === 0 && prevState.currentStep > 0) {
+    if (currentStep === 0 && prevStep > 0) {
       this.setState(INITIAL_STATE_OBJ);
     }
   },
@@ -128,6 +137,7 @@ const DNA = React.createClass({
   _renderSection (_position, _rotation) {
     // don't render after leaving nucleus
     if (!this._isInNucles()) return null;
+
     let y = 2;
     let bpNodes = this.props.sequence.split('').map( (d, i) => {
       let bpNode = this._renderBasePair(d, i);
@@ -176,13 +186,17 @@ const DNA = React.createClass({
   },
 
   _renderBillboard () {
-    // TEMP nothin
-    return null;
-    if (this.state.currentStep < 2) return null;
-    let currentStepD = this.props.steps[this.state.currentStep - 1];
-    let _src = currentStepD.imgSrc;
-    let _position = currentStepD.position || DEFAULT_BILLBOARD_POSITION;
-    return <a-image position={_position} width='9' height='9' id='billboard-img' src={_src} />;
+    let imgNodes = this.props.steps.map( (d, i) => {
+      let _src = d.imgSrc;
+      let _position = d.position || DEFAULT_BILLBOARD_POSITION;
+      let _visible = (i === this.state.currentStep);
+      return <a-image key={`bb${i}`} visible={_visible} position={_position} width='9' height='9' src={_src} />;
+    });
+    return (
+      <a-entity>
+        {imgNodes}
+      </a-entity>
+    );
   },
 
   // ribosome and polypeptide chain
@@ -312,16 +326,16 @@ const G_COLOR = '#77468C';
 const B_COLOR = '#3499FB';
 const RNA_POL_COLOR = '#E85379';
 const RIBOSOME_COLOR = '#3499FB';
-const PEP_COLOR = G_COLOR; // TEMP, should be dynamic
+const PEP_COLOR = '#FFF'; // TEMP, should be dynamic
 const NUCLEUS_BG_COLOR = '#272822';
-const CYTO_BG_COLOR = '#FFF';
+const CYTO_BG_COLOR = '#725095';
 
 const DEFAULT_BILLBOARD_POSITION = '0 1 -2';
 const RNA_POL_START_COORD = 25;
 const RNA_POL_END_COORD = 33;
 const SIZE = 0.75;
 const STEP_FACTOR_R = 22;
-const START_SCENE_Y = 0;
+const START_SCENE_Y = -1;
 const END_SCENE_Y = 10;
 const BORDER_Y = Math.abs(START_SCENE_Y - END_SCENE_Y) / 2;
 const RIBO_START_Y = -(END_SCENE_Y - 3.5);

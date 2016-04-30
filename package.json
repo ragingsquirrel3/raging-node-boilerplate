@@ -4,7 +4,7 @@
   "description": "A boilerplate node.js project with tests",
   "scripts": {
     "build": "webpack && minify build/dev/js/bundle.js",
-    "start": "cp -r src/lib/static/ build/dev/ && webpack-dev-server --content-base build/dev/",
+    "start": "cp -r src/lib/static/ build/dev/assets && cp src/lib/static/index.html build/dev/index.html && webpack-dev-server --content-base build/dev/",
     "test": "mocha test --compilers js:babel-register"
   },
   "authors": [
