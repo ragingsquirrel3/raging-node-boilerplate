@@ -66,8 +66,8 @@ const DNA = React.createClass({
 
   componentDidUpdate(prevProps, prevState) {
     // adjust steps
-    let prevStep = prevState.currentStep;
-    let currentStep = this.state.currentStep;
+    let prevStep = prevState.currentStep - 1;
+    let currentStep = this.state.currentStep - 1;
     // if 0 -> 1 animate rnaPolY
     if (currentStep === 1 && prevStep === 0) {
       const END_Y = 1.85;
@@ -186,17 +186,11 @@ const DNA = React.createClass({
   },
 
   _renderBillboard () {
-    let imgNodes = this.props.steps.map( (d, i) => {
-      let _src = d.imgSrc;
-      let _position = d.position || DEFAULT_BILLBOARD_POSITION;
-      let _visible = (i === this.state.currentStep);
-      return <a-image key={`bb${i}`} visible={_visible} position={_position} width='9' height='9' src={_src} />;
-    });
-    return (
-      <a-entity>
-        {imgNodes}
-      </a-entity>
-    );
+    let d = this.props.steps[this.state.currentStep];
+    let _src = d.imgSrc;
+    console.log(_src)
+    let _position = d.position || DEFAULT_BILLBOARD_POSITION;
+    return <a-image position={_position} width='9' height='9' src={_src} />;
   },
 
   // ribosome and polypeptide chain
