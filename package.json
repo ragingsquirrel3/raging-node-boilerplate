@@ -4,7 +4,7 @@
   "description": "A boilerplate node.js project with tests",
   "scripts": {
     "build": "webpack --progress --colors",
-    "start": "webpack-dev-server --content-base build/dev/",
+    "start": "cp -r src/static/ build/dev/ && webpack-dev-server --content-base build/dev/",
     "test": "mocha test --compilers js:babel-register"
   },
   "authors": [
