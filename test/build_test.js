@@ -1,7 +1,7 @@
 // *** test that the browser build works ***
-const sys = require('sys');
-const exec = require('child_process').exec;
-const fs = require('fs');
+import sys from 'sys';
+import { exec } from 'child_process';
+import fs from 'fs';
 
 const BUILD_COMMAND = 'webpack';
 const TEST_BUILD_DIR = __dirname + '/../build/prod/';
