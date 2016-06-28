@@ -2,7 +2,7 @@ require('webpack');
 const path = require('path');
 
 module.exports = {
-  entry: './src/entry.js',
+  entry: './src/dev_entry.js',
   output: {
     path: path.resolve(__dirname, 'build/prod/assets'),
     publicPath: '/assets/',
