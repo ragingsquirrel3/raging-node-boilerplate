@@ -1,35 +1,33 @@
 export const nodes = [
   {
-    label: 'Jack',
+    name: 'Jack',
     id: 1,
-    data: {
-      size: 5,
-      length: 2
-    },
-    label: 'Jill',
+    size: 5,
+    length: 2
+  },
+  {
+    name: 'Jill',
     id: 2,
-    data: {
-      size: 2,
-      length: 3
-    },
-    label: 'Bob',
+    size: 2,
+    length: 3
+  },
+  {
+    name: 'Bob',
     id: 3,
-    data: {
-      size: 1,
-      length: 2
-    },
-    label: 'Tina',
+    size: 1,
+    length: 2
+  },
+  {
+    name: 'Tina',
     id: 4,
-    data: {
-      size: 15,
-      length: 8
-    },
-    label: 'Jose',
+    size: 15,
+    length: 8
+  },
+  {
+    name: 'Jose',
     id: 5,
-    data: {
-      size: 5,
-      length: 2
-    }
+    size: 5,
+    length: 2
   }
 ];
 export const edges = [
