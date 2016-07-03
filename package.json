@@ -5,7 +5,7 @@
   "scripts": {
     "build": "webpack --progress --colors",
     "start": "cp -r src/static/ build/dev/ && webpack-dev-server --content-base build/dev/",
-    "test": "mocha test --compilers js:babel-register"
+    "test": "mocha test --compilers js:babel-register --timeout 5000"
   },
   "authors": [
     "Travis Sheppard"
@@ -33,7 +33,7 @@
     "gzip-size": "^3.0.0",
     "isparta-loader": "^1.0.0",
     "mocha": "^2.0.1",
-    "react": "^15.1.0",
+    "react": "^15.2.0",
     "react-dom": "^15.1.0",
     "webpack": "^1.4.13",
     "webpack-dev-middleware": "^1.2.0"

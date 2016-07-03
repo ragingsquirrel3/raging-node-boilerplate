@@ -14,7 +14,9 @@ const ChordDiagram = React.createClass({
   render () {
     return (
       <div>
-        <svg ref='svg' width={WIDTH} height={HEIGHT} />
+        <svg ref='svg' width={WIDTH} height={HEIGHT}>
+          <g ref='nodeTarget' className='node-target' transform='translate(300,300)'/>
+        </svg>
       </div>
     );
   },
@@ -23,48 +25,34 @@ const ChordDiagram = React.createClass({
     this._renderSVG();
   },
 
-  // d3-fu
+  // d3-fu like https://bl.ocks.org/mbostock/7607999
   _renderSVG () {
-    const outerRadius = Math.min(WIDTH, HEIGHT) * 0.5 - 40;
-    const innerRadius = outerRadius - 30;
-
-    const chord = d3.svg.chord();
-    const arc = d3.svg.arc()
-      .innerRadius(innerRadius)
-      .outerRadius(outerRadius);
-    const cluster = d3.layout.cluster()
-      .size([360, 20]);
-
-    // get data formatted
-    let data = this._convertDataToFlare();
-    // format nodes
-    let nodes = cluster.nodes(data);
-    let links = cluster.links(nodes);
-  },
-
-  // make data like this https://github.com/d3/d3-3.x-api-reference/blob/master/Cluster-Layout.md
-  _convertDataToFlare () {
-    let branches = this.props.edges.map( d => {
-      let sourceChild = this._getNodeDataPointById(d.source);
-      let targetChild = this._getNodeDataPointById(d.target);
-      return {
-        name: '',
-        children: [sourceChild, targetChild]
-      };
-    });
-    let data = {
-      name: '',
-      children: branches
-    };
-    return data;
-  },
-
-  _getNodeDataPointById (id) {
-    const nodes = this.props.nodes;
-    for (var i = nodes.length - 1; i >= 0; i--) {
-      if (nodes[i].id === id) return nodes[i];
-    }
-    return null;
+    // create layout functions
+    var diameter = 460,
+      radius = diameter / 2,
+      innerRadius = radius - 120;
+    var cluster = d3.layout.cluster()
+      .size([360, innerRadius])
+      .sort(null)
+      .value(function(d) { return d.size; });
+    var bundle = d3.layout.bundle();
+    var line = d3.svg.line.radial()
+      .interpolate("bundle")
+      .tension(.85)
+      .radius(function(d) { return d.y; })
+      .angle(function(d) { return d.x / 180 * Math.PI; });
+    // prepare data
+    var nodesData = cluster.nodes({ name: '', children: this.props.nodes });
+    // d3 DOM rendering
+    var nodeTarget = d3.select(this.refs.nodeTarget);
+    var node = nodeTarget.selectAll('.text-node')
+      .data(nodesData.filter(function(n) { return !n.children; }))
+    .enter().append("text")
+      .attr("class", "text-node")
+      .attr("dy", ".31em")
+      .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + (d.y + 8) + ",0)" + (d.x < 180 ? "" : "rotate(180)"); })
+      .style("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+      .text(function(d) { return d.name; })
   }
 });
 
