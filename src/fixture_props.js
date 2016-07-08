@@ -1,6 +1,6 @@
 export const nodes = [
   {
-    name: 'Jack',
+    name: 'Paul',
     id: 1,
     size: 5,
     length: 2
